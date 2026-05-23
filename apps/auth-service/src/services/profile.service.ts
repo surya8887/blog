@@ -1,7 +1,7 @@
-import { PrismaClient } from "../generated/prisma/index.js";
+import { prisma } from "../config/db.js";
 import { ApiError } from "@blog/common";
 
-const prisma = new PrismaClient();
+// Removed manual instantiation of prisma
 
 export const getProfileService = async (userId: string) => {
     const user = await prisma.user.findUnique({

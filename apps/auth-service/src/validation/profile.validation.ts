@@ -11,7 +11,7 @@ export const updateProfileSchema = z.object({
         birthDate: z.string().datetime().optional(), // Expects ISO 8601 string
         gender: z.string().optional(),
         address: z.string().optional(),
-        socialLinks: z.record(z.string().url()).optional(), // Expects a JSON object with string URLs
+        socialLinks: z.record(z.string(), z.string().url()).optional(), // Expects a JSON object with string URLs
     }).refine(data => Object.keys(data).length > 0, {
         message: "At least one field must be provided to update"
     })

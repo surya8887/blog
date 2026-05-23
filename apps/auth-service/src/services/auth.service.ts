@@ -1,15 +1,13 @@
-import { PrismaClient } from "../generated/prisma/index.js";
+import { prisma } from "../config/db.js";
 import { ApiError } from "@blog/common";
-import jwt from "jsonwebtoken";
-// Note: In a real project, use bcrypt or argon2. For now we will mock it or use a simple base64 to avoid adding dependencies, or use the node built-in crypto. Let's assume standard crypto is fine.
-import crypto from "crypto";
-import { env } from "../config/env.js";
+import { 
+    hashPassword, 
+    checkPassword, 
+    generateAccessToken, 
+    generateRefreshToken 
+} from "../utils/auth.utils.js";
 
-const prisma = new PrismaClient();
-
-const hashPassword = (password: string): string => {
-    return crypto.createHash("sha256").update(password).digest("hex");
-};
+// Removed manual instantiation of prisma
 
 export const signupService = async (data: any) => {
     const { email, password, firstName, lastName } = data;
@@ -25,7 +23,7 @@ export const signupService = async (data: any) => {
     const hashedPassword = hashPassword(password);
 
     // Create user and profile in a transaction
-    const user = await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx: any) => {
         const newUser = await tx.user.create({
             data: {
                 email,
@@ -57,7 +55,7 @@ export const loginService = async (data: any) => {
         include: { profile: true }
     });
 
-    if (!user || user.password !== hashPassword(password)) {
+    if (!user || !checkPassword(password, user.password)) {
         throw new ApiError("Invalid email or password", 401);
     }
 
@@ -66,17 +64,8 @@ export const loginService = async (data: any) => {
     }
 
     // Generate tokens
-    const accessToken = jwt.sign(
-        { id: user.id, role: user.role, name: `${user.profile?.firstName} ${user.profile?.lastName}`, avatar: user.profile?.profilePicture },
-        env.JWT_SECRET,
-        { expiresIn: env.JWT_EXPIRES_IN }
-    );
-
-    const refreshToken = jwt.sign(
-        { id: user.id },
-        env.JWT_SECRET,
-        { expiresIn: "7d" } // Refresh tokens are typically longer lived
-    );
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     // Save refresh token to user
     await prisma.user.update({
