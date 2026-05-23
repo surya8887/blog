@@ -1,13 +1,17 @@
 import { z } from "zod";
 
-const signupValidation = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
+export const signupSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email format").toLowerCase(),
+        password: z.string().min(6, "Password must be at least 6 characters long"),
+        firstName: z.string().min(1, "First name is required").trim(),
+        lastName: z.string().min(1, "Last name is required").trim(),
+    })
 });
 
-const signinValidation = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
+export const loginSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email format").toLowerCase(),
+        password: z.string().min(1, "Password is required"),
+    })
 });
-
-export {signupValidation,signinValidation};

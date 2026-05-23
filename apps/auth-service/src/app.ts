@@ -9,9 +9,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"))
 
 // routes
-import authrouter from "./routes/auth.route.js"
+import authRouter from "./routes/auth.route.js";
+import profileRouter from "./routes/profile.route.js";
 
-app.use('/api/v1/auth',authrouter)
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/profiles', profileRouter);
 
 // error handlers
 import { errorHandler } from "@blog/common";
