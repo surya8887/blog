@@ -1,0 +1,8 @@
+{
+  "name": "blog-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
