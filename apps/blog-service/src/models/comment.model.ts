@@ -2,7 +2,11 @@ import mongoose, { Schema, Document, Types, } from "mongoose";
 
 export interface IComment extends Document {
     content: string;
-    author: Types.ObjectId;
+    author: {
+        userId: Types.ObjectId;
+        name: string;
+        avatar?: string;
+    };
     post: Types.ObjectId;
     parentComment?: Types.ObjectId | null;
     isDeleted: boolean;
@@ -19,10 +23,19 @@ const commentSchema = new Schema<IComment>(
         },
 
         author: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-            index: true,
+            userId: {
+                type: Schema.Types.ObjectId,
+                required: true,
+                index: true,
+            },
+            name: {
+                type: String,
+                required: true,
+            },
+            avatar: {
+                type: String,
+                default: "",
+            },
         },
 
         post: {

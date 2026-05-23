@@ -8,7 +8,11 @@ export interface IPost extends Document {
   excerpt?: string;
   coverImage?: string;
 
-  author: Types.ObjectId;
+  author: {
+    userId: Types.ObjectId;
+    name: string;
+    avatar?: string;
+  };
   category?: Types.ObjectId;
   status: "draft" | "published" | "archived";
   publishedAt?: Date;
@@ -51,10 +55,19 @@ const postSchema = new Schema<IPost>(
     },
 
     author: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      index: true,
+      userId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        index: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      avatar: {
+        type: String,
+        default: "",
+      },
     },
 
     category: {
