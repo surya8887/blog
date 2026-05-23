@@ -9,7 +9,8 @@ const envSchema = z.object({
     ACCESS_TOKEN : z.string().min(1),
     ACCESS_TOKEN_EXPIRY : z.string().min(1),
     REFRESH_TOKEN : z.string().min(1),
-    REFRESH_TOKEN_EXPIRY : z.string().min(1)
+    REFRESH_TOKEN_EXPIRY : z.string().min(1),
+    JWT_SECRET : z.string().min(1)
 });
 
 export const env = envSchema.parse(process.env);

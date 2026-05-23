@@ -16,7 +16,7 @@ The application is structured into **apps** (the actual microservices and fronte
 
 ### Packages (Shared Libraries)
 
-- **`common`**: Shared utilities, helper functions, and error handling middleware used across multiple microservices.
+- **`common`**: Shared utilities used across multiple microservices. Includes standardized `ApiError` and `ApiResponse` classes, an `asyncHandler` wrapper to eliminate try-catch boilerplate, and standard Express middlewares (`errorHandler`, `authMiddleware`).
 - **`message-broker`**: Abstraction layer for event-driven communication between services (e.g., using RabbitMQ or Kafka).
 - **`shared-types`**: TypeScript interfaces and type definitions shared between the frontend, backend services, and packages to ensure end-to-end type safety.
 

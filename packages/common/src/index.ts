@@ -1,4 +1,4 @@
 export * from "./apiError/index.js";
 export * from "./apiResponse/index.js";
 export * from "./asyncHandler/index.js";
-export * from "./middlewares/error.middlewar.js";
+export * from "./middlewares/error.middleware.js";
