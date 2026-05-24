@@ -21,13 +21,13 @@ import {
 const ALL_CATEGORY = "All"
 
 export function Blogs() {
-  const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
+  const [searchParams] = useSearchParams()
+  const [activeCategory, setActiveCategory] = useState<string>(searchParams.get("category") || ALL_CATEGORY)
   const [posts, setPosts] = useState<Post[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [searchParams] = useSearchParams()
   const urlSearchQuery = searchParams.get("search") || ""
 
   useEffect(() => {
@@ -46,11 +46,14 @@ export function Blogs() {
   useEffect(() => {
     let cancelled = false
     setIsLoading(true)
+    const selectedCat = categories.find((c) => c.name === activeCategory)
+    const categoryId = selectedCat ? selectedCat._id : undefined
+
     postsApi
       .list({
         page: currentPage,
         limit: 7,
-        ...(activeCategory === ALL_CATEGORY ? {} : { category: activeCategory }),
+        ...(activeCategory !== ALL_CATEGORY && categoryId ? { category: categoryId } : {}),
         ...(urlSearchQuery ? { search: urlSearchQuery } : {})
       })
       .then((result) => {
@@ -66,11 +69,18 @@ export function Blogs() {
     return () => {
       cancelled = true
     }
-  }, [activeCategory, currentPage, urlSearchQuery])
+  }, [activeCategory, currentPage, urlSearchQuery, categories])
 
   useEffect(() => {
     setCurrentPage(1)
   }, [urlSearchQuery])
+
+  useEffect(() => {
+    const cat = searchParams.get("category")
+    if (cat && cat !== activeCategory) {
+      setActiveCategory(cat)
+    }
+  }, [searchParams, activeCategory])
 
   const handleCategorySelect = (c: string | undefined) => {
     setActiveCategory(c || ALL_CATEGORY)
