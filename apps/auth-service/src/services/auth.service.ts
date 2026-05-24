@@ -92,6 +92,10 @@ export const logoutService = async (userId: string) => {
 
 export const googleLoginService = async (idToken: string) => {
     try {
+        if (!auth) {
+            throw new ApiError("Firebase Admin not configured. Cannot process Google login.", 500);
+        }
+        
         const decodedToken = await auth.verifyIdToken(idToken);
         const { email, name, picture } = decodedToken;
 
