@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signInWithGoogle } from "@/services/firebase"
 import { useAuthStore } from "@/store/useAuthStore"
+import { api } from "@/lib/axios"
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -36,11 +37,12 @@ export function Login() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true)
     try {
-      console.log(values)
+      const response = await api.post("/auth/login", values)
+      setUser(response.data.data.user)
       toast.success("Successfully logged in!")
       navigate("/")
-    } catch (error) {
-      toast.error("Failed to log in. Please check your credentials.")
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to log in. Please check your credentials.")
     } finally {
       setIsLoading(false)
     }
@@ -49,17 +51,15 @@ export function Login() {
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true)
     try {
-      const user = await signInWithGoogle()
-      setUser({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      })
+      const firebaseUser = await signInWithGoogle()
+      const idToken = await firebaseUser.getIdToken()
+      
+      const response = await api.post("/auth/google", { idToken })
+      setUser(response.data.data.user)
       toast.success("Successfully logged in with Google!")
       navigate("/")
-    } catch (error) {
-      toast.error("Failed to log in with Google.")
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to log in with Google.")
     } finally {
       setIsGoogleLoading(false)
     }

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { Menu, X, Search, Hexagon } from "lucide-react"
 import { useAuthStore } from "@/store/useAuthStore"
 import { logout } from "@/services/firebase"
+import { api } from "@/lib/axios"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
 import {
@@ -14,16 +15,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner"
 
 export function Navbar() {
-  const { user } = useAuthStore()
+  const { user, clearAuth } = useAuthStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     try {
-      await logout()
+      await logout() // Keep firebase logout if needed
+      await api.post("/auth/logout")
+      clearAuth()
+      toast.success("Successfully logged out")
     } catch (error) {
       console.error(error)
+      toast.error("Failed to log out")
     }
   }
 
@@ -43,6 +49,10 @@ export function Navbar() {
       </Link>
     </>
   )
+
+  const displayName = user?.profile?.firstName 
+    ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim() 
+    : 'User'
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -75,15 +85,15 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "User"} />
-                    <AvatarFallback>{user.displayName?.charAt(0) || "U"}</AvatarFallback>
+                    <AvatarImage src={user.profile?.profilePicture || undefined} alt={displayName} />
+                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                    <p className="text-sm font-medium leading-none">{displayName}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user.email}
                     </p>
@@ -94,7 +104,7 @@ export function Navbar() {
                 <DropdownMenuItem>Dashboard</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>

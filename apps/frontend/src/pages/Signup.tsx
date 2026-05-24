@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signInWithGoogle } from "@/services/firebase"
 import { useAuthStore } from "@/store/useAuthStore"
+import { api } from "@/lib/axios"
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -38,11 +39,11 @@ export function Signup() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true)
     try {
-      console.log(values)
-      toast.success("Account created successfully!")
-      navigate("/")
-    } catch (error) {
-      toast.error("Failed to create account.")
+      await api.post("/auth/signup", values)
+      toast.success("Account created successfully! Please log in.")
+      navigate("/login")
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to create account.")
     } finally {
       setIsLoading(false)
     }
@@ -51,17 +52,15 @@ export function Signup() {
   const handleGoogleSignup = async () => {
     setIsGoogleLoading(true)
     try {
-      const user = await signInWithGoogle()
-      setUser({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      })
+      const firebaseUser = await signInWithGoogle()
+      const idToken = await firebaseUser.getIdToken()
+      
+      const response = await api.post("/auth/google", { idToken })
+      setUser(response.data.data.user)
       toast.success("Successfully signed up with Google!")
       navigate("/")
-    } catch (error) {
-      toast.error("Failed to sign up with Google.")
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to sign up with Google.")
     } finally {
       setIsGoogleLoading(false)
     }

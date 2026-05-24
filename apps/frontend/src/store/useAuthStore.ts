@@ -1,10 +1,20 @@
 import { create } from 'zustand'
 
+export interface UserProfile {
+  id: string
+  firstName: string
+  lastName: string
+  profilePicture: string | null
+  bio?: string | null
+}
+
 export interface User {
-  uid: string
-  email: string | null
-  displayName: string | null
-  photoURL: string | null
+  id: string
+  email: string
+  isActive: boolean
+  isVerified: boolean
+  role: string
+  profile: UserProfile | null
 }
 
 interface AuthState {
@@ -12,6 +22,7 @@ interface AuthState {
   isLoading: boolean
   setUser: (user: User | null) => void
   setLoading: (isLoading: boolean) => void
+  clearAuth: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -19,4 +30,5 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   setUser: (user) => set({ user }),
   setLoading: (isLoading) => set({ isLoading }),
+  clearAuth: () => set({ user: null }),
 }))
