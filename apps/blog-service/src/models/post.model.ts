@@ -7,7 +7,6 @@ export interface IPost extends Document {
   content: string;
   excerpt?: string;
   coverImage?: string;
-
   author: {
     userId: string;
     name: string;

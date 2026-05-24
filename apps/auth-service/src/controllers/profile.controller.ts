@@ -1,9 +1,6 @@
 import type { Request, Response } from "express";
 import { asyncHandler, ApiResponse } from "@blog/common";
-import {
-    getProfileService,
-    updateProfileService
-} from "../services/profile.service.js";
+import {getProfileService,updateProfileService} from "../services/profile.service.js";
 
 export const getMe = asyncHandler(async (req: Request, res: Response) => {
     const profile = await getProfileService(req.user.id);

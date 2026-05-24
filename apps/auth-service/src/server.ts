@@ -9,7 +9,7 @@ const startServer = async () => {
     console.log("✅ Database connected successfully");
 
     // Start server
-    const server = app.listen(env.PORT, "127.0.0.1", () => {
+    const server = app.listen(env.PORT, () => {
       console.log(`🚀 Server is running at http://localhost:${env.PORT}`);
     });
 
