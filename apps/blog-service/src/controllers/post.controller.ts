@@ -5,7 +5,8 @@ import {
     updatePostService,
     deletePostService,
     getSinglePostService,
-    getAllPostsService
+    getAllPostsService,
+    getMyPostsService
 } from "../services/post.service.js";
 
 export const createPost = asyncHandler(async (req: Request, res: Response) => {
@@ -31,4 +32,9 @@ export const getSinglePost = asyncHandler(async (req: Request, res: Response) =>
 export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
     const result = await getAllPostsService(req.query);
     res.status(200).json(new ApiResponse(200, result, "Posts fetched successfully"));
+});
+
+export const getMyPosts = asyncHandler(async (req: Request, res: Response) => {
+    const result = await getMyPostsService(req.user.id, req.query);
+    res.status(200).json(new ApiResponse(200, result, "Your posts fetched successfully"));
 });

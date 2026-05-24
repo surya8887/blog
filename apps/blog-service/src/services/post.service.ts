@@ -168,3 +168,40 @@ export const getAllPostsService = async (query: any) => {
         limit: Number(limit)
     });
 };
+
+export const getMyPostsService = async (userId: string, query: any) => {
+    const { page = 1, limit = 20, sortBy = "latest", sortType = "desc" } = query;
+
+    const pipeline: PipelineStage[] = [
+        { $match: { "author.userId": userId } },
+        {
+            $lookup: {
+                from: "categories",
+                localField: "category",
+                foreignField: "_id",
+                as: "categoryDetails"
+            }
+        },
+        {
+            $unwind: {
+                path: "$categoryDetails",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+    ];
+
+    const sortDirection = sortType === "asc" ? 1 : -1;
+    let sortStage: any = {};
+    switch (sortBy) {
+        case "most viewed": sortStage = { viewCount: sortDirection }; break;
+        case "most liked":  sortStage = { likeCount: sortDirection }; break;
+        default:            sortStage = { createdAt: sortDirection }; break;
+    }
+    pipeline.push({ $sort: sortStage });
+
+    return await aggregatePaginate(Post, pipeline, {
+        page: Number(page),
+        limit: Number(limit)
+    });
+};
+

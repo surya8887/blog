@@ -13,7 +13,8 @@ import {
     updatePost,
     deletePost,
     getSinglePost,
-    getAllPosts
+    getAllPosts,
+    getMyPosts
 } from "../controllers/post.controller.js";
 
 const router = Router();
@@ -21,6 +22,10 @@ const router = Router();
 router.route("/")
     .get(validate(getAllPostsSchema), getAllPosts)
     .post(protect, validate(createPostSchema), createPost);
+
+// GET /api/v1/posts/my-posts — returns all posts by the logged-in user
+router.route("/my-posts")
+    .get(protect, getMyPosts);
 
 router.route("/:id")
     .get(validate(getSinglePostSchema), getSinglePost)
