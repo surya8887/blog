@@ -6,6 +6,7 @@ import {
     logoutService,
     googleLoginService
 } from "../services/auth.service.js";
+import { setTokenCookies, clearTokenCookies } from "../utils/token.utils.js";
 
 export const signup = asyncHandler(async (req: Request, res: Response) => {
     const user = await signupService(req.body);
@@ -14,17 +15,20 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
     const result = await loginService(req.body);
+    setTokenCookies({ res, accessToken: result.accessToken, refreshToken: result.refreshToken });
     res.status(200).json(new ApiResponse(200, result, "Logged in successfully"));
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
     // Requires authentication to logout
     await logoutService(req.user.id);
+    clearTokenCookies(res);
     res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
 });
 
 export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
     const { idToken } = req.body;
     const result = await googleLoginService(idToken);
+    setTokenCookies({ res, accessToken: result.accessToken, refreshToken: result.refreshToken });
     res.status(200).json(new ApiResponse(200, result, "Logged in with Google successfully"));
 });
