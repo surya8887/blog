@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, ArrowRight, Clock, User as UserIcon, Loader2 } from "lucide-react"
@@ -96,7 +97,7 @@ export function Blogs() {
           <>
             {/* Featured Post (Only show if "All" is selected) */}
             {activeCategory === "All" && featuredPost && (
-              <div className="mb-20 group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 border border-white/5 bg-card">
+              <Link to={`/blogs/${featuredPost._id}`} className="block mb-20 group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 border border-white/5 bg-card">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
                   <div className="relative h-64 lg:h-full overflow-hidden">
                     <img 
@@ -143,7 +144,7 @@ export function Blogs() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Recent Posts Grid */}
@@ -156,7 +157,7 @@ export function Blogs() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {recentPosts.map((post: any) => (
-                  <div key={post._id} className="group flex flex-col bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1">
+                  <Link to={`/blogs/${post._id}`} key={post._id} className="group flex flex-col bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1">
                     <div className="relative h-48 overflow-hidden">
                       <img 
                         src={post.coverImage || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000"} 
@@ -182,12 +183,12 @@ export function Blogs() {
                         <div className="text-xs text-muted-foreground font-medium">
                           {new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
                         </div>
-                        <Button variant="ghost" size="sm" className="h-8 px-2 text-primary hover:text-primary hover:bg-primary/10 group/btn">
+                        <Button variant="ghost" size="sm" className="h-8 px-2 text-primary hover:text-primary hover:bg-primary/10 group/btn pointer-events-none">
                           Read <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
                         </Button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

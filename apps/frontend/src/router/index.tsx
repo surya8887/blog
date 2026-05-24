@@ -7,6 +7,7 @@ import { Login } from "@/pages/Login"
 import { Signup } from "@/pages/Signup"
 import { About } from "@/pages/About"
 import { Blogs } from "@/pages/Blogs"
+import { SingleBlog } from "@/pages/SingleBlog"
 import { Categories } from "@/pages/Categories"
 import { DashboardOverview } from "@/pages/dashboard/DashboardOverview"
 import { Profile } from "@/pages/dashboard/Profile"
@@ -26,6 +27,7 @@ export const AppRouter = () => {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/blogs" element={<Blogs />} />
+              <Route path="/blogs/:id" element={<SingleBlog />} />
               <Route path="/categories" element={<Categories />} />
               
               {/* Dashboard Routes */}
