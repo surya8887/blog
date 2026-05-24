@@ -1,0 +1,65 @@
+import { motion } from "framer-motion"
+import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+
+export function Hero() {
+  return (
+    <section className="relative overflow-hidden py-20 md:py-32">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
+      <div className="container px-4 md:px-6 mx-auto">
+        <div className="flex flex-col items-center text-center space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className="inline-flex items-center rounded-full border bg-muted/50 px-3 py-1 text-sm font-medium backdrop-blur-sm">
+              <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
+              Introducing DevBlog v2.0
+            </span>
+          </motion.div>
+          
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl"
+          >
+            The premium destination for{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+              modern developers
+            </span>
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-xl text-muted-foreground max-w-2xl leading-relaxed"
+          >
+            Discover technical insights, share your stories, and connect with a community of innovative builders shaping the future of the web.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+          >
+            <Button size="lg" className="rounded-full px-8" asChild>
+              <Link to="/blogs">
+                Start Reading <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-full px-8 bg-background/50 backdrop-blur-sm" asChild>
+              <Link to="/signup">
+                Create Account
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
