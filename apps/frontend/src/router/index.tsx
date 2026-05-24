@@ -5,6 +5,8 @@ import { DashboardLayout } from "@/layouts/DashboardLayout"
 import { Home } from "@/pages/Home"
 import { Login } from "@/pages/Login"
 import { Signup } from "@/pages/Signup"
+import { About } from "@/pages/About"
+import { Blogs } from "@/pages/Blogs"
 import { DashboardOverview } from "@/pages/dashboard/DashboardOverview"
 import { Profile } from "@/pages/dashboard/Profile"
 import { Settings } from "@/pages/dashboard/Settings"
@@ -20,6 +22,8 @@ export const AppRouter = () => {
           <MainLayout>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/blogs" element={<Blogs />} />
               
               {/* Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardLayout />}>
@@ -27,8 +31,6 @@ export const AppRouter = () => {
                 <Route path="profile" element={<Profile />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
-
-              {/* Add more routes here, e.g., blogs, categories, about */}
             </Routes>
           </MainLayout>
         } 
