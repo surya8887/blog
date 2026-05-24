@@ -3,17 +3,19 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Link, useNavigate } from "react-router-dom"
-import { Hexagon, Loader2 } from "lucide-react"
+import { Hexagon, Loader2, Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signInWithGoogle } from "@/services/firebase"
 import { useAuthStore } from "@/store/useAuthStore"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
@@ -21,6 +23,7 @@ const formSchema = z.object({
 export function Signup() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const { setUser } = useAuthStore()
 
@@ -66,45 +69,74 @@ export function Signup() {
 
   return (
     <div className="container relative min-h-[calc(100vh-4rem)] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex overflow-hidden">
         <div className="absolute inset-0 bg-zinc-900" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000')] opacity-30 mix-blend-overlay bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 via-zinc-900/40 to-zinc-900/10" />
+        
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <Hexagon className="mr-2 h-6 w-6" />
-          DevBlog
+          <Hexagon className="mr-2 h-6 w-6 text-primary" />
+          <span className="text-xl font-bold tracking-tight">DevBlog</span>
         </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
+        <div className="relative z-20 mt-auto max-w-md">
+          <blockquote className="space-y-4">
+            <p className="text-xl leading-relaxed font-medium">
               &ldquo;Join our community of thousands of developers sharing knowledge and building the future together.&rdquo;
             </p>
+            <div className="flex items-center space-x-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="inline-block h-8 w-8 rounded-full ring-2 ring-zinc-900 overflow-hidden bg-muted">
+                    <img src={`https://i.pravatar.cc/150?u=${i}`} alt="user" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <div className="text-sm text-zinc-300">Join 10,000+ developers</div>
+            </div>
           </blockquote>
         </div>
       </div>
       <div className="lg:p-8 flex items-center justify-center h-full min-h-[80vh]">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
+        <Card className="mx-auto flex w-full flex-col justify-center sm:w-[420px] shadow-lg border-muted/60">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-3xl font-bold tracking-tight">
               Create an account
-            </h1>
-            <p className="text-sm text-muted-foreground">
+            </CardTitle>
+            <CardDescription className="text-sm text-muted-foreground mt-2">
               Enter your details below to create your account
-            </p>
-          </div>
+            </CardDescription>
+          </CardHeader>
           
-          <div className="grid gap-6">
+          <CardContent className="grid gap-6">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    disabled={isLoading || isGoogleLoading}
-                    {...register("name")}
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name.message}</p>
-                  )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="John"
+                      disabled={isLoading || isGoogleLoading}
+                      {...register("firstName")}
+                      className="bg-muted/50"
+                    />
+                    {errors.firstName && (
+                      <p className="text-xs text-red-500">{errors.firstName.message}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Doe"
+                      disabled={isLoading || isGoogleLoading}
+                      {...register("lastName")}
+                      className="bg-muted/50"
+                    />
+                    {errors.lastName && (
+                      <p className="text-xs text-red-500">{errors.lastName.message}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -117,24 +149,40 @@ export function Signup() {
                     autoCorrect="off"
                     disabled={isLoading || isGoogleLoading}
                     {...register("email")}
+                    className="bg-muted/50"
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email.message}</p>
+                    <p className="text-xs text-red-500">{errors.email.message}</p>
                   )}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    disabled={isLoading || isGoogleLoading}
-                    {...register("password")}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      disabled={isLoading || isGoogleLoading}
+                      {...register("password")}
+                      className="bg-muted/50 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                      <span className="sr-only">Toggle password visibility</span>
+                    </button>
+                  </div>
                   {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
+                    <p className="text-xs text-red-500">{errors.password.message}</p>
                   )}
                 </div>
-                <Button disabled={isLoading || isGoogleLoading}>
+                <Button disabled={isLoading || isGoogleLoading} className="w-full mt-2">
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
@@ -144,10 +192,10 @@ export function Signup() {
             </form>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-background px-2 text-muted-foreground font-medium">
                   Or continue with
                 </span>
               </div>
@@ -157,6 +205,7 @@ export function Signup() {
               type="button"
               disabled={isLoading || isGoogleLoading}
               onClick={handleGoogleSignup}
+              className="w-full bg-background"
             >
               {isGoogleLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -179,18 +228,17 @@ export function Signup() {
               )}{" "}
               Google
             </Button>
-          </div>
-
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Log in
-            </Link>
-          </p>
-        </div>
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="font-semibold text-primary hover:underline underline-offset-4"
+              >
+                Log in
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

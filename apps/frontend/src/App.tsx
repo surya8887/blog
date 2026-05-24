@@ -12,7 +12,7 @@ import { Signup } from "@/pages/Signup"
 function App() {
   return (
     <QueryProvider>
-      <ThemeProvider defaultTheme="system" storageKey="devblog-theme">
+      <ThemeProvider defaultTheme="system" storageKey="devblog-theme" attribute="class">
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
