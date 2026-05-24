@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom"
 import { MainLayout } from "@/layouts/MainLayout"
 import { DashboardLayout } from "@/layouts/DashboardLayout"
+import { AdminLayout } from "@/layouts/AdminLayout"
 
 import { Home } from "@/pages/Home"
 import { Login } from "@/pages/Login"
@@ -16,11 +17,27 @@ import { CreateBlog } from "@/pages/dashboard/CreateBlog"
 import { EditBlog } from "@/pages/dashboard/EditBlog"
 import { PublishSuccess } from "@/pages/dashboard/PublishSuccess"
 
+import { AdminDashboard } from "@/pages/admin/AdminDashboard"
+import { AdminPosts } from "@/pages/admin/AdminPosts"
+import { AdminPostComments } from "@/pages/admin/AdminPostComments"
+import { AdminComments } from "@/pages/admin/AdminComments"
+import { AdminCategories } from "@/pages/admin/AdminCategories"
+
 export const AppRouter = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+
+      {/* Admin routes */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="posts" element={<AdminPosts />} />
+        <Route path="posts/:id/comments" element={<AdminPostComments />} />
+        <Route path="comments" element={<AdminComments />} />
+        <Route path="categories" element={<AdminCategories />} />
+      </Route>
+
       <Route 
         path="/*" 
         element={

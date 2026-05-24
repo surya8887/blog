@@ -38,9 +38,10 @@ export function Login() {
     setIsLoading(true)
     try {
       const response = await api.post("/auth/login", values)
-      setUser(response.data.data.user)
+      const userData = response.data.data.user
+      setUser(userData)
       toast.success("Successfully logged in!")
-      navigate("/")
+      navigate(userData.role === "admin" ? "/admin" : "/")
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to log in. Please check your credentials.")
     } finally {
@@ -55,9 +56,10 @@ export function Login() {
       const idToken = await firebaseUser.getIdToken()
       
       const response = await api.post("/auth/google", { idToken })
-      setUser(response.data.data.user)
+      const userData = response.data.data.user
+      setUser(userData)
       toast.success("Successfully logged in with Google!")
-      navigate("/")
+      navigate(userData.role === "admin" ? "/admin" : "/")
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to log in with Google.")
     } finally {

@@ -4,7 +4,8 @@ import {
     addCommentService,
     updateCommentService,
     deleteCommentService,
-    getCommentsByPostService
+    getCommentsByPostService,
+    adminGetAllCommentsService
 } from "../services/comment.service.js";
 
 export const addComment = asyncHandler(async (req: Request, res: Response) => {
@@ -25,4 +26,9 @@ export const deleteComment = asyncHandler(async (req: Request, res: Response) =>
 export const getCommentsByPost = asyncHandler(async (req: Request, res: Response) => {
     const result = await getCommentsByPostService(req.params.postId as string, req.query);
     res.status(200).json(new ApiResponse(200, result, "Comments fetched successfully"));
+});
+
+export const adminGetAllComments = asyncHandler(async (req: Request, res: Response) => {
+    const result = await adminGetAllCommentsService(req.query);
+    res.status(200).json(new ApiResponse(200, result, "All comments fetched (admin)"));
 });

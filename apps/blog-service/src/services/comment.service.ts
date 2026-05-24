@@ -116,3 +116,42 @@ export const getCommentsByPostService = async (postId: string, query: any) => {
         limit: Number(limit)
     });
 };
+
+export const adminGetAllCommentsService = async (query: any) => {
+    const { page = 1, limit = 20, search } = query;
+
+    const pipeline: PipelineStage[] = [
+        { $match: { isDeleted: false } },
+        {
+            $lookup: {
+                from: "posts",
+                localField: "post",
+                foreignField: "_id",
+                as: "postDetails"
+            }
+        },
+        {
+            $unwind: { path: "$postDetails", preserveNullAndEmptyArrays: true }
+        },
+    ];
+
+    if (search) {
+        pipeline.push({
+            $match: {
+                $or: [
+                    { content: { $regex: search, $options: "i" } },
+                    { "postDetails.title": { $regex: search, $options: "i" } },
+                    { "author.name": { $regex: search, $options: "i" } },
+                ]
+            }
+        });
+    }
+
+    pipeline.push({ $sort: { createdAt: -1 } });
+
+    return await aggregatePaginate(Comment, pipeline, {
+        page: Number(page),
+        limit: Number(limit)
+    });
+};
+

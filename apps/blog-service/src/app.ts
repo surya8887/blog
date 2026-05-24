@@ -15,12 +15,14 @@ import postRouter from "./routes/post.route.js";
 import commentRouter from "./routes/comment.route.js";
 import likeRouter from "./routes/like.route.js";
 import uploadRouter from "./routes/upload.route.js";
+import adminRouter from "./routes/admin.route.js";
 
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/upload", uploadRouter);
+app.use("/api/v1/admin", adminRouter);
 
 // error handlers
 import { errorHandler } from "@blog/common";

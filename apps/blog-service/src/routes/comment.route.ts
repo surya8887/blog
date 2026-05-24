@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protect } from "@blog/common";
+import { protect, restrictTo } from "@blog/common";
 import { validate } from "../middlewares/validate.middleware.js";
 import {
     addCommentSchema,
@@ -11,7 +11,8 @@ import {
     addComment,
     updateComment,
     deleteComment,
-    getCommentsByPost
+    getCommentsByPost,
+    adminGetAllComments
 } from "../controllers/comment.controller.js";
 
 const router = Router();
@@ -25,5 +26,9 @@ router.route("/:id")
 
 router.route("/post/:postId")
     .get(validate(getCommentsByPostSchema), getCommentsByPost);
+
+// GET /api/v1/comments/admin/all — admin only: all comments with post info
+router.route("/admin/all")
+    .get(protect, restrictTo("admin"), adminGetAllComments);
 
 export default router;
