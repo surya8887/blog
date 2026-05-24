@@ -42,7 +42,7 @@ export const updateProfileService = async (userId: string, data: any) => {
     return userWithoutSensitiveInfo;
 };
 
-import cloudinary from "../config/cloudinary.js";
+import { cloudinaryService } from "@blog/common";
 
 export const uploadImageService = async (userId: string, imageType: "profilePicture" | "coverPicture", buffer: Buffer) => {
     // Check if user exists
@@ -55,19 +55,10 @@ export const uploadImageService = async (userId: string, imageType: "profilePict
         throw new ApiError("User profile not found", 404);
     }
 
-    // Upload to Cloudinary using stream
-    const uploadResult = await new Promise<any>((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-            {
-                folder: `devblog/${imageType}s`,
-                public_id: `${userId}-${Date.now()}`,
-            },
-            (error, result) => {
-                if (error) return reject(new ApiError("Failed to upload image to Cloudinary", 500));
-                resolve(result);
-            }
-        );
-        stream.end(buffer);
+    // Upload to Cloudinary using class-based service
+    const uploadResult = await cloudinaryService.uploadImage(buffer, {
+        folder: `devblog/${imageType}s`,
+        public_id: `${userId}-${Date.now()}`,
     });
 
     const secureUrl = uploadResult.secure_url;

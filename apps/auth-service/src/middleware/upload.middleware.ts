@@ -1,19 +1,8 @@
-import multer from 'multer';
+import { createUploadMiddleware } from '@blog/common';
 
-// Use memory storage to stream the file directly to Cloudinary
-const storage = multer.memoryStorage();
-
-export const upload = multer({ 
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5 MB max file size
-  },
-  fileFilter: (req, file, cb) => {
-    // Only accept image files
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'));
-    }
-  }
+// Create a custom upload middleware instance for the auth-service
+// Allows 5MB max size and standard web image formats.
+export const upload = createUploadMiddleware({
+  maxSizeMB: 5,
+  allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"]
 });
