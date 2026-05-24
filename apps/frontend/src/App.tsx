@@ -1,5 +1,7 @@
+import { useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Toaster } from "@/components/ui/sonner"
+import { useAuthStore } from "@/store/useAuthStore"
 
 import { ThemeProvider } from "@/providers/ThemeProvider"
 import { QueryProvider } from "@/providers/QueryProvider"
@@ -14,6 +16,12 @@ import { Profile } from "@/pages/dashboard/Profile"
 import { Settings } from "@/pages/dashboard/Settings"
 
 function App() {
+  const { checkAuth } = useAuthStore()
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
+
   return (
     <QueryProvider>
       <ThemeProvider defaultTheme="system" storageKey="devblog-theme" attribute="class">
