@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ImagePlus, ArrowLeft, Loader2, Send } from "lucide-react"
+import { api } from "@/api/axios"
 
 const CATEGORIES = ["Technology", "React", "Design", "Architecture", "CSS", "Life", "Career"]
 
@@ -43,22 +44,20 @@ export function CreateBlog() {
 
     setIsPublishing(true)
     try {
-      // TODO: Replace with actual API call to the backend
-      // Example:
-      // const formData = new FormData()
-      // formData.append("title", title)
-      // formData.append("content", content)
-      // formData.append("category", selectedCategory)
-      // if (coverFile) formData.append("coverImage", coverFile)
-      // await api.post("/blogs", formData)
+      const payload = {
+        title,
+        content,
+        category: selectedCategory || "Technology",
+        status: "published" // Or "draft" if you have a draft feature
+      }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await api.post("/posts", payload)
       
       toast.success("Blog post published successfully!")
       navigate("/blogs") // Redirect to blogs page
-    } catch (error) {
-      toast.error("Failed to publish blog post.")
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.response?.data?.message || "Failed to publish blog post.")
     } finally {
       setIsPublishing(false)
     }

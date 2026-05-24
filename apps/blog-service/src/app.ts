@@ -1,10 +1,12 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import type { Application } from "express";
 
 export const app:Application = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static("public"))
 
 // Routes

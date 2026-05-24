@@ -5,11 +5,11 @@ const objectIdPattern = /^[0-9a-fA-F]{24}$/;
 export const createPostSchema = z.object({
     body: z.object({
         title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters").trim(),
-        slug: z.string().min(1, "Slug is required").trim().toLowerCase(),
+        slug: z.string().trim().toLowerCase().optional(),
         content: z.string().min(1, "Content is required"),
         excerpt: z.string().max(500, "Excerpt must be less than 500 characters").optional(),
         coverImage: z.string().optional(),
-        category: z.string().regex(objectIdPattern, "Invalid Object ID for category").optional(),
+        category: z.string().optional(),
         status: z.enum(["draft", "published", "archived"]).optional(),
     })
 });
@@ -24,7 +24,7 @@ export const updatePostSchema = z.object({
         content: z.string().min(1).optional(),
         excerpt: z.string().max(500).optional(),
         coverImage: z.string().optional(),
-        category: z.string().regex(objectIdPattern).optional(),
+        category: z.string().optional(),
         status: z.enum(["draft", "published", "archived"]).optional(),
     }).refine(data => Object.keys(data).length > 0, {
         message: "At least one field must be provided to update"
