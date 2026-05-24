@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Menu, X, Search, Hexagon } from "lucide-react"
+import { Menu, X, Search, Hexagon, Shield } from "lucide-react"
 import { useAuthStore } from "@/store/useAuthStore"
 import { logout } from "@/services/firebase"
 import { api } from "@/api/axios"
@@ -54,6 +54,9 @@ export function Navbar() {
   const displayName = user?.profile?.firstName 
     ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim() 
     : 'User'
+
+  const userRole = user?.role?.toLowerCase()
+  const isAdmin = userRole === "admin" || userRole === "superadmin"
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -111,6 +114,14 @@ export function Navbar() {
                   <DropdownMenuItem asChild className="cursor-pointer md:hidden">
                     <Link to="/dashboard/create-blog">Write a Blog</Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link to="/admin" className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-primary" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link to="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>

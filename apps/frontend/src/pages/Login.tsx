@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -24,7 +24,14 @@ export function Login() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
-  const { setUser } = useAuthStore()
+  const { user, setUser } = useAuthStore()
+
+  useEffect(() => {
+    if (user) {
+      const role = user.role?.toLowerCase()
+      navigate(role === "admin" || role === "superadmin" ? "/admin" : "/", { replace: true })
+    }
+  }, [user, navigate])
 
   const {
     register,
