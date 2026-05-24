@@ -10,6 +10,7 @@ export const createPostSchema = z.object({
         excerpt: z.string().max(500, "Excerpt must be less than 500 characters").optional(),
         coverImage: z.string().optional(),
         category: z.string().optional(),
+        tags: z.array(z.string()).optional(),
         status: z.enum(["draft", "published", "archived"]).optional(),
     })
 });
@@ -25,6 +26,7 @@ export const updatePostSchema = z.object({
         excerpt: z.string().max(500).optional(),
         coverImage: z.string().optional(),
         category: z.string().optional(),
+        tags: z.array(z.string()).optional(),
         status: z.enum(["draft", "published", "archived"]).optional(),
     }).refine(data => Object.keys(data).length > 0, {
         message: "At least one field must be provided to update"

@@ -7,8 +7,6 @@ import { Label } from "@/components/ui/label"
 import { ImagePlus, ArrowLeft, Loader2, Save, X, Tag } from "lucide-react"
 import { api } from "@/api/axios"
 
-const CATEGORIES = ["Technology", "React", "Design", "Architecture", "CSS", "Life", "Career"]
-
 export function EditBlog() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -22,6 +20,20 @@ export function EditBlog() {
   const [tags, setTags] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState("")
   const [status, setStatus] = useState<"draft" | "published">("draft")
+  const [categories, setCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories")
+        const fetchedCats = response.data.data || []
+        setCategories(fetchedCats.map((c: any) => c.name))
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [coverImageUrl, setCoverImageUrl] = useState("")
@@ -107,7 +119,7 @@ export function EditBlog() {
     try {
       const payload: Record<string, any> = {
         title, content, status: saveStatus ?? status,
-        category: selectedCategory || "Technology",
+        category: selectedCategory || (categories.length > 0 ? categories[0] : "Technology"),
       }
       if (excerpt.trim()) payload.excerpt = excerpt.trim()
       if (coverImageUrl) payload.coverImage = coverImageUrl
@@ -209,7 +221,7 @@ export function EditBlog() {
 
         {/* Category */}
         <div className="mb-8 flex flex-wrap gap-2">
-          {CATEGORIES.map(cat => (
+          {categories.map(cat => (
             <button key={cat} onClick={() => setSelectedCategory(cat === selectedCategory ? "" : cat)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${selectedCategory === cat
                 ? "bg-primary text-primary-foreground border-primary shadow-sm"
