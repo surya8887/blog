@@ -6,12 +6,24 @@ import { Search, ArrowRight, Clock, User as UserIcon, Loader2 } from "lucide-rea
 import { Badge } from "@/components/ui/badge"
 import { api } from "@/api/axios"
 
-const CATEGORIES = ["All", "Technology", "React", "Design", "Architecture", "CSS"]
-
 export function Blogs() {
   const [activeCategory, setActiveCategory] = useState("All")
   const [posts, setPosts] = useState<any[]>([])
+  const [categories, setCategories] = useState<string[]>(["All"])
   const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories")
+        const fetchedCats = response.data.data || []
+        setCategories(["All", ...fetchedCats.map((c: any) => c.name)])
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -74,7 +86,7 @@ export function Blogs() {
       <div className="container max-w-6xl mx-auto px-4 mt-12">
         {/* Categories Pill Menu */}
         <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-          {CATEGORIES.map(category => (
+          {categories.map(category => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}

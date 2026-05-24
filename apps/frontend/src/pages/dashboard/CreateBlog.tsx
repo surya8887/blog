@@ -142,8 +142,8 @@ export function CreateBlog() {
     <div className="min-h-screen bg-background pb-32 animate-in fade-in duration-500">
 
       {/* Top Navbar / Publish Bar */}
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="container max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+        <div className="w-full px-6 md:px-12 h-20 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-muted-foreground">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
@@ -172,7 +172,14 @@ export function CreateBlog() {
         </div>
       </div>
 
-      <div className="container max-w-3xl mx-auto px-4 mt-8">
+      <div className="w-full px-4 md:px-8 py-12 relative z-10 flex-grow flex flex-col">
+        
+        <div className="bg-card/40 backdrop-blur-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.1)] rounded-[2.5rem] overflow-hidden relative flex-grow flex flex-col">
+          {/* Ambient glow inside the card */}
+          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+          <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-purple-500/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+          <div className="p-8 md:p-14 lg:p-20 relative z-10 flex-grow flex flex-col w-full">
 
         {/* Cover Image Uploader */}
         <div className="mb-10 group relative">
@@ -321,6 +328,8 @@ export function CreateBlog() {
           style={{ minHeight: "300px" }}
         />
 
+          </div>
+        </div>
       </div>
     </div>
   )
