@@ -13,6 +13,7 @@ import { DashboardOverview } from "@/pages/dashboard/DashboardOverview"
 import { Profile } from "@/pages/dashboard/Profile"
 import { Settings } from "@/pages/dashboard/Settings"
 import { CreateBlog } from "@/pages/dashboard/CreateBlog"
+import { PublishSuccess } from "@/pages/dashboard/PublishSuccess"
 
 export const AppRouter = () => {
   return (
@@ -36,6 +37,7 @@ export const AppRouter = () => {
                 <Route path="profile" element={<Profile />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="create-blog" element={<CreateBlog />} />
+                <Route path="publish-success/:id" element={<PublishSuccess />} />
               </Route>
             </Routes>
           </MainLayout>

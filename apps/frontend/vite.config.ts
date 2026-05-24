@@ -18,6 +18,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api/v1/upload': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
       '/api/v1/posts': {
         target: 'http://localhost:5001',
         changeOrigin: true,
