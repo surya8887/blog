@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import { Loader2, Search } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
@@ -7,6 +8,15 @@ import { PostCard } from "@/components/blog/PostCard"
 import { categoriesApi } from "@/api/categories.api"
 import { postsApi } from "@/api/posts.api"
 import type { Category, Post } from "@/types"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 const ALL_CATEGORY = "All"
 
@@ -15,6 +25,10 @@ export function Blogs() {
   const [posts, setPosts] = useState<Post[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [searchParams] = useSearchParams()
+  const urlSearchQuery = searchParams.get("search") || ""
 
   useEffect(() => {
     let cancelled = false
@@ -33,9 +47,17 @@ export function Blogs() {
     let cancelled = false
     setIsLoading(true)
     postsApi
-      .list(activeCategory === ALL_CATEGORY ? {} : { category: activeCategory })
+      .list({
+        page: currentPage,
+        limit: 7,
+        ...(activeCategory === ALL_CATEGORY ? {} : { category: activeCategory }),
+        ...(urlSearchQuery ? { search: urlSearchQuery } : {})
+      })
       .then((result) => {
-        if (!cancelled) setPosts(result.docs ?? [])
+        if (!cancelled) {
+          setPosts(result.docs ?? [])
+          setTotalPages(result.totalPages || 1)
+        }
       })
       .catch((err) => console.error("Failed to fetch posts:", err))
       .finally(() => {
@@ -44,11 +66,78 @@ export function Blogs() {
     return () => {
       cancelled = true
     }
-  }, [activeCategory])
+  }, [activeCategory, currentPage, urlSearchQuery])
 
-  const featuredPost = posts[0]
-  const recentPosts = posts.slice(1)
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [urlSearchQuery])
+
+  const handleCategorySelect = (c: string | undefined) => {
+    setActiveCategory(c || ALL_CATEGORY)
+    setCurrentPage(1)
+  }
+
+  const isDefaultView = activeCategory === ALL_CATEGORY && !urlSearchQuery && currentPage === 1
+  const featuredPost = isDefaultView ? posts[0] : null
+  const recentPosts = isDefaultView ? posts.slice(1) : posts
   const categoryNames = [ALL_CATEGORY, ...categories.map((c) => c.name)]
+
+  const renderPaginationItems = () => {
+    const items = []
+    const maxVisible = 5
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              isActive={currentPage === i}
+              onClick={(e) => {
+                e.preventDefault()
+                setCurrentPage(i)
+              }}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        )
+      }
+    } else {
+      items.push(
+        <PaginationItem key={1}>
+          <PaginationLink href="#" isActive={currentPage === 1} onClick={(e) => { e.preventDefault(); setCurrentPage(1) }}>1</PaginationLink>
+        </PaginationItem>
+      )
+      
+      if (currentPage > 3) {
+        items.push(<PaginationItem key="ellipsis1"><PaginationEllipsis /></PaginationItem>)
+      }
+      
+      const start = Math.max(2, currentPage - 1)
+      const end = Math.min(totalPages - 1, currentPage + 1)
+      
+      for (let i = start; i <= end; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink href="#" isActive={currentPage === i} onClick={(e) => { e.preventDefault(); setCurrentPage(i) }}>{i}</PaginationLink>
+          </PaginationItem>
+        )
+      }
+
+      if (currentPage < totalPages - 2) {
+        items.push(<PaginationItem key="ellipsis2"><PaginationEllipsis /></PaginationItem>)
+      }
+
+      items.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink href="#" isActive={currentPage === totalPages} onClick={(e) => { e.preventDefault(); setCurrentPage(totalPages) }}>{totalPages}</PaginationLink>
+        </PaginationItem>
+      )
+    }
+
+    return items
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -64,17 +153,6 @@ export function Blogs() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
             Discover the latest articles, tutorials, and deep-dives into web development, design, and software architecture.
           </p>
-
-          <div className="max-w-xl mx-auto relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            </div>
-            <Input
-              type="text"
-              placeholder="Search articles..."
-              className="pl-12 py-6 text-lg rounded-full bg-background border-border/60 shadow-sm focus-visible:ring-primary/50 transition-all duration-300"
-            />
-          </div>
         </div>
       </div>
 
@@ -83,7 +161,7 @@ export function Blogs() {
           categories={categoryNames}
           selected={activeCategory}
           allowDeselect={false}
-          onSelect={(c) => setActiveCategory(c || ALL_CATEGORY)}
+          onSelect={handleCategorySelect}
           className="justify-center mb-16"
         />
 
@@ -100,7 +178,11 @@ export function Blogs() {
             )}
 
             <h3 className="text-2xl font-bold mb-8">
-              {activeCategory === ALL_CATEGORY ? "Latest Articles" : `${activeCategory} Articles`}
+              {urlSearchQuery
+                ? `Search Results for "${urlSearchQuery}"`
+                : activeCategory === ALL_CATEGORY
+                ? "Latest Articles"
+                : `${activeCategory} Articles`}
             </h3>
 
             {recentPosts.length === 0 && (!featuredPost || activeCategory !== ALL_CATEGORY) ? (
@@ -108,11 +190,45 @@ export function Blogs() {
                 No posts found for this category.
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {recentPosts.map((post, i) => (
-                  <PostCard key={post._id} post={post} index={i} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {recentPosts.map((post, i) => (
+                    <PostCard key={post._id} post={post} index={i} />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="mt-16">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious 
+                            href="#" 
+                            onClick={(e) => {
+                              e.preventDefault()
+                              if (currentPage > 1) setCurrentPage(p => p - 1)
+                            }}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                          />
+                        </PaginationItem>
+                        
+                        {renderPaginationItems()}
+
+                        <PaginationItem>
+                          <PaginationNext 
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              if (currentPage < totalPages) setCurrentPage(p => p + 1)
+                            }}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

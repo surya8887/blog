@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { Menu, X, Search, Hexagon, Shield, PenLine } from "lucide-react"
 import { toast } from "sonner"
 
@@ -55,6 +55,23 @@ export function Navbar() {
   const { user, clearAuth } = useAuthStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const [searchValue, setSearchValue] = useState(searchParams.get("search") || "")
+
+  useEffect(() => {
+    setSearchValue(searchParams.get("search") || "")
+  }, [searchParams])
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchValue.trim()) {
+      navigate(`/blogs?search=${encodeURIComponent(searchValue.trim())}`)
+    } else {
+      navigate(`/blogs`)
+    }
+  }
+
   const handleLogout = async () => {
     try {
       await firebaseLogout()
@@ -85,14 +102,16 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-2">
-            <div className="relative">
+            <form onSubmit={handleSearchSubmit} className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <input
                 type="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search articles..."
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-8 md:w-[200px] lg:w-[300px]"
               />
-            </div>
+            </form>
             <ThemeToggle />
           </div>
 
@@ -179,14 +198,16 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="container md:hidden border-t py-4 px-4 pb-6 flex flex-col gap-4 bg-background">
           <NavLinksList />
-          <div className="relative mt-2">
+          <form onSubmit={(e) => { handleSearchSubmit(e); setIsMobileMenuOpen(false); }} className="relative mt-2">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search articles..."
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-8"
             />
-          </div>
+          </form>
           {!user && (
             <div className="flex flex-col gap-2 mt-2">
               <Button variant="outline" className="w-full" asChild>
