@@ -7,8 +7,6 @@ import { Label } from "@/components/ui/label"
 import { ImagePlus, ArrowLeft, Loader2, Send, X, Tag } from "lucide-react"
 import { api } from "@/api/axios"
 
-const CATEGORIES = ["Technology", "React", "Design", "Architecture", "CSS", "Life", "Career"]
-
 export function CreateBlog() {
   const navigate = useNavigate()
   const [isPublishing, setIsPublishing] = useState(false)
@@ -18,6 +16,23 @@ export function CreateBlog() {
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [categories, setCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories")
+        const fetchedCats = response.data.data || []
+        setCategories(fetchedCats.map((c: any) => c.name))
+        if (fetchedCats.length > 0 && !selectedCategory) {
+          setSelectedCategory(fetchedCats[0].name)
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   // Image upload states
   const [coverFile, setCoverFile] = useState<File | null>(null)
@@ -117,7 +132,7 @@ export function CreateBlog() {
       const payload: Record<string, any> = {
         title,
         content,
-        category: selectedCategory || "Technology",
+        category: selectedCategory || (categories.length > 0 ? categories[0] : "Technology"),
         status: "published",
       }
 
@@ -246,7 +261,7 @@ export function CreateBlog() {
         {/* Category Selector */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map(category => (
+            {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category === selectedCategory ? "" : category)}
