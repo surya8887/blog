@@ -165,6 +165,7 @@ export const googleLoginService = async (idToken: string) => {
             refreshToken
         };
     } catch (error: any) {
+        console.error("Firebase verifyIdToken error:", error);
         if (error instanceof ApiError) {
             throw error;
         }
