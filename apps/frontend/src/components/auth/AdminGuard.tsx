@@ -1,6 +1,8 @@
 import { Navigate, useLocation } from "react-router-dom"
-import { useAuthStore } from "@/store/useAuthStore"
 import { ShieldAlert } from "lucide-react"
+import { useAuthStore } from "@/store/useAuthStore"
+import { Spinner } from "@/components/shared/Spinner"
+import { isAdmin } from "@/constants/roles"
 
 interface AdminGuardProps {
   children: React.ReactNode
@@ -10,20 +12,13 @@ export const AdminGuard = ({ children }: AdminGuardProps) => {
   const { user, isLoading } = useAuthStore()
   const location = useLocation()
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    )
-  }
+  if (isLoading) return <Spinner fullScreen />
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  const role = user.role?.toLowerCase()
-  if (role !== "admin" && role !== "superadmin") {
+  if (!isAdmin(user)) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 text-center px-4">
         <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">

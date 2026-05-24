@@ -1,6 +1,6 @@
 import { z } from "zod"
+import type { Profile } from "@/types"
 
-// Profile form validation schema
 export const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -17,25 +17,4 @@ export const profileSchema = z.object({
 
 export type ProfileFormValues = z.infer<typeof profileSchema>
 
-// Profile data structure from API
-export interface ProfileData {
-  id?: string;
-  userId?: string;
-  firstName: string;
-  lastName: string;
-  bio?: string | null;
-  phone?: string | null;
-  birthDate?: string | null;
-  gender?: string | null;
-  address?: string | null;
-  profilePicture?: string | null;
-  coverPicture?: string | null;
-  socialLinks?: {
-    facebook?: string;
-    instagram?: string;
-    twitter?: string;
-    linkedin?: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
-}
+export type ProfileData = Profile

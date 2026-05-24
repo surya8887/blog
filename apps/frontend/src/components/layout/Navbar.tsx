@@ -1,9 +1,17 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Menu, X, Search, Hexagon, Shield } from "lucide-react"
+import { Menu, X, Search, Hexagon, Shield, PenLine } from "lucide-react"
+import { toast } from "sonner"
+
 import { useAuthStore } from "@/store/useAuthStore"
-import { logout } from "@/services/firebase"
-import { api } from "@/api/axios"
+import { authApi } from "@/api/auth.api"
+import { logout as firebaseLogout } from "@/services/firebase"
+import { isAdmin } from "@/constants/roles"
+import { APP_NAME } from "@/constants/app"
+import { getDisplayName } from "@/lib/user"
+import { getInitial } from "@/lib/format"
+import { getErrorMessage } from "@/lib/error"
+
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
 import {
@@ -15,7 +23,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { toast } from "sonner"
+
+const NAV_LINKS = [
+  { to: "/", label: "Home" },
+  { to: "/blogs", label: "Blogs" },
+  { to: "/categories", label: "Categories" },
+  { to: "/about", label: "About" },
+] as const
+
+function NavLinksList() {
+  return (
+    <>
+      {NAV_LINKS.map(({ to, label }, idx) => (
+        <Link
+          key={to}
+          to={to}
+          className={
+            idx === 0
+              ? "text-sm font-medium transition-colors hover:text-primary"
+              : "text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          }
+        >
+          {label}
+        </Link>
+      ))}
+    </>
+  )
+}
 
 export function Navbar() {
   const { user, clearAuth } = useAuthStore()
@@ -23,40 +57,18 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await logout() // Keep firebase logout if needed
-      await api.post("/auth/logout")
+      await firebaseLogout()
+      await authApi.logout()
     } catch (error) {
-      console.error(error)
-      toast.error("Failed to log out from server")
+      toast.error(getErrorMessage(error, "Failed to log out from server"))
     } finally {
       clearAuth()
       toast.success("Successfully logged out")
     }
   }
 
-  const NavLinks = () => (
-    <>
-      <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
-        Home
-      </Link>
-      <Link to="/blogs" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        Blogs
-      </Link>
-      <Link to="/categories" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        Categories
-      </Link>
-      <Link to="/about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        About
-      </Link>
-    </>
-  )
-
-  const displayName = user?.profile?.firstName 
-    ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim() 
-    : 'User'
-
-  const userRole = user?.role?.toLowerCase()
-  const isAdmin = userRole === "admin" || userRole === "superadmin"
+  const displayName = getDisplayName(user)
+  const userIsAdmin = isAdmin(user)
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,10 +76,10 @@ export function Navbar() {
         <div className="flex items-center gap-6 md:gap-10">
           <Link to="/" className="flex items-center space-x-2">
             <Hexagon className="h-6 w-6 text-primary" />
-            <span className="inline-block font-bold">DevBlog</span>
+            <span className="inline-block font-bold">{APP_NAME}</span>
           </Link>
           <div className="hidden md:flex gap-6">
-            <NavLinks />
+            <NavLinksList />
           </div>
         </div>
 
@@ -86,9 +98,13 @@ export function Navbar() {
 
           {user ? (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground" asChild>
+              <Button
+                variant="ghost"
+                className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                asChild
+              >
                 <Link to="/dashboard/create-blog">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <PenLine className="h-4 w-4" />
                   Write
                 </Link>
               </Button>
@@ -96,8 +112,8 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.profile?.profilePicture || undefined} alt={displayName} />
-                      <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={user.profile?.profilePicture ?? undefined} alt={displayName} />
+                      <AvatarFallback>{getInitial(displayName)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -105,16 +121,14 @@ export function Navbar() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{displayName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild className="cursor-pointer md:hidden">
                     <Link to="/dashboard/create-blog">Write a Blog</Link>
                   </DropdownMenuItem>
-                  {isAdmin && (
+                  {userIsAdmin && (
                     <DropdownMenuItem asChild className="cursor-pointer">
                       <Link to="/admin" className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-primary" />
@@ -153,7 +167,8 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => setIsMobileMenuOpen((v) => !v)}
+            aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -163,7 +178,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="container md:hidden border-t py-4 px-4 pb-6 flex flex-col gap-4 bg-background">
-          <NavLinks />
+          <NavLinksList />
           <div className="relative mt-2">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
@@ -175,7 +190,7 @@ export function Navbar() {
           {!user && (
             <div className="flex flex-col gap-2 mt-2">
               <Button variant="outline" className="w-full" asChild>
-                 <Link to="/login">Log in</Link>
+                <Link to="/login">Log in</Link>
               </Button>
               <Button className="w-full" asChild>
                 <Link to="/signup">Sign up</Link>

@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
-import { api } from "@/api/axios"
+
+import { Spinner } from "@/components/shared/Spinner"
+import { profilesApi } from "@/api/profiles.api"
+import { getErrorMessage } from "@/lib/error"
 import { ProfileView } from "@/features/profile/components/ProfileView"
 import { ProfileEdit } from "@/features/profile/components/ProfileEdit"
 import type { ProfileData } from "@/features/profile/types"
@@ -11,51 +13,49 @@ export const Profile = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [profileData, setProfileData] = useState<ProfileData | null>(null)
 
-  // Fetch complete profile on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get("/profiles/me")
-        setProfileData(response.data.data.profile)
-      } catch (error) {
-        toast.error("Failed to load profile details")
-      } finally {
-        setIsLoading(false)
-      }
+    let cancelled = false
+    profilesApi
+      .getMe()
+      .then((user) => {
+        if (!cancelled) setProfileData(user.profile)
+      })
+      .catch((err) => toast.error(getErrorMessage(err, "Failed to load profile details")))
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
+    return () => {
+      cancelled = true
     }
-    fetchProfile()
   }, [])
 
   if (isLoading) {
     return (
       <div className="flex justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Spinner />
       </div>
     )
   }
 
-  const handleSaveSuccess = (updatedProfile: ProfileData) => {
-    setProfileData(updatedProfile)
-    setIsEditing(false)
+  if (!profileData) {
+    return (
+      <div className="text-center p-8 text-muted-foreground">Profile data not available.</div>
+    )
   }
 
   return (
     <div className="space-y-6">
-      {!isEditing && profileData ? (
-        <ProfileView 
-          profileData={profileData} 
-          onEditClick={() => setIsEditing(true)} 
-        />
-      ) : profileData ? (
-        <ProfileEdit 
-          profileData={profileData} 
+      {isEditing ? (
+        <ProfileEdit
+          profileData={profileData}
           onCancel={() => setIsEditing(false)}
-          onSaveSuccess={handleSaveSuccess}
+          onSaveSuccess={(updated) => {
+            setProfileData(updated)
+            setIsEditing(false)
+          }}
         />
       ) : (
-        <div className="text-center p-8 text-muted-foreground">
-          Profile data not available.
-        </div>
+        <ProfileView profileData={profileData} onEditClick={() => setIsEditing(true)} />
       )}
     </div>
   )

@@ -1,21 +1,6 @@
-import { create } from 'zustand'
-
-export interface UserProfile {
-  id: string
-  firstName: string
-  lastName: string
-  profilePicture: string | null
-  bio?: string | null
-}
-
-export interface User {
-  id: string
-  email: string
-  isActive: boolean
-  isVerified: boolean
-  role: string
-  profile: UserProfile | null
-}
+import { create } from "zustand"
+import { profilesApi } from "@/api/profiles.api"
+import type { User } from "@/types"
 
 interface AuthState {
   user: User | null
@@ -26,8 +11,6 @@ interface AuthState {
   checkAuth: () => Promise<void>
 }
 
-import { api } from '@/api/axios'
-
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: true,
@@ -37,10 +20,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true })
     try {
-      const response = await api.get('/profiles/me')
-      set({ user: response.data.data, isLoading: false })
-    } catch (error) {
+      const user = await profilesApi.getMe()
+      set({ user, isLoading: false })
+    } catch {
       set({ user: null, isLoading: false })
     }
-  }
+  },
 }))

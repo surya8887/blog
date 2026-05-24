@@ -1,42 +1,46 @@
 import { Link } from "react-router-dom"
-import { Clock, Heart, MessageSquare, ArrowRight, User as UserIcon } from "lucide-react"
+import { Clock, Heart, MessageSquare, User as UserIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import type { Post } from "@/types"
+import { FALLBACK_COVER_IMAGE } from "@/constants/app"
+import { formatDate, getReadTime } from "@/lib/format"
+
+type Variant = "default" | "compact" | "featured"
 
 interface PostCardProps {
-  post: any
-  variant?: "default" | "compact" | "featured"
+  post: Post
+  variant?: Variant
   index?: number
 }
 
-function getReadTime(content: string) {
-  return Math.max(1, Math.ceil((content || "").split(" ").length / 200))
+function getCategory(post: Post): string {
+  return post.categoryDetails?.name ?? post.category?.name ?? "Uncategorized"
 }
 
 export function PostCard({ post, variant = "default", index = 0 }: PostCardProps) {
   const delay = Math.min(index * 100, 500)
-  const readTime = getReadTime(post.content || "")
-  const category = post.categoryDetails?.name || post.category?.name || "Uncategorized"
-  const fallbackImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000"
+  const readTime = getReadTime(post.content)
+  const category = getCategory(post)
+  const cover = post.coverImage || FALLBACK_COVER_IMAGE
+  const href = `/blogs/${post._id}`
 
   if (variant === "featured") {
     return (
       <Link
-        to={`/blogs/${post._id}`}
+        to={href}
         className="group relative block rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-primary/15 transition-all duration-500 border border-border/40 bg-card"
         style={{ animationDelay: `${delay}ms` }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[380px]">
-          {/* Image */}
           <div className="relative lg:col-span-3 h-56 lg:h-full overflow-hidden">
             <img
-              src={post.coverImage || fallbackImage}
+              src={cover}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/30 opacity-0 lg:opacity-100 pointer-events-none" />
           </div>
 
-          {/* Content */}
           <div className="lg:col-span-2 p-8 lg:p-10 flex flex-col justify-center relative">
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
             <Badge className="w-fit mb-5 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 font-medium px-3 py-1 text-xs">
@@ -50,29 +54,7 @@ export function PostCard({ post, variant = "default", index = 0 }: PostCardProps
                 {post.excerpt}
               </p>
             )}
-            <div className="mt-auto pt-5 border-t border-border/40 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center overflow-hidden border border-border/50">
-                  {post.author?.avatar ? (
-                    <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <UserIcon className="w-4 h-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold leading-none">{post.author?.name || "Anonymous"}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {new Date(post.publishedAt || post.createdAt).toLocaleDateString("en-US", {
-                      month: "short", day: "numeric", year: "numeric"
-                    })}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {readTime}m</span>
-                <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {post.likeCount || 0}</span>
-              </div>
-            </div>
+            <PostMeta post={post} readTime={readTime} />
           </div>
         </div>
       </Link>
@@ -82,13 +64,13 @@ export function PostCard({ post, variant = "default", index = 0 }: PostCardProps
   if (variant === "compact") {
     return (
       <Link
-        to={`/blogs/${post._id}`}
+        to={href}
         className="group flex gap-4 p-4 rounded-2xl hover:bg-muted/40 transition-all duration-200 border border-transparent hover:border-border/50"
         style={{ animationDelay: `${delay}ms` }}
       >
         <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
           <img
-            src={post.coverImage || fallbackImage}
+            src={cover}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -106,17 +88,15 @@ export function PostCard({ post, variant = "default", index = 0 }: PostCardProps
     )
   }
 
-  // Default card
   return (
     <Link
-      to={`/blogs/${post._id}`}
+      to={href}
       className="group flex flex-col bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary/8 transition-all duration-400 hover:-translate-y-1 animate-fade-up"
       style={{ animationDelay: `${delay}ms` }}
     >
-      {/* Image */}
       <div className="relative h-48 overflow-hidden bg-muted">
         <img
-          src={post.coverImage || fallbackImage}
+          src={cover}
           alt={post.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
@@ -128,7 +108,6 @@ export function PostCard({ post, variant = "default", index = 0 }: PostCardProps
         </div>
       </div>
 
-      {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <h4 className="text-base font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
           {post.title}
@@ -140,28 +119,69 @@ export function PostCard({ post, variant = "default", index = 0 }: PostCardProps
         )}
 
         <div className="mt-auto pt-3.5 border-t border-border/40 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-muted overflow-hidden border border-border/40">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-muted overflow-hidden border border-border/40 flex items-center justify-center">
               {post.author?.avatar ? (
-                <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
+                <img src={post.author.avatar} alt={post.author?.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-muted-foreground">
-                  {post.author?.name?.[0] || "?"}
-                </div>
+                <span className="text-xs font-semibold text-muted-foreground">
+                  {post.author?.name?.[0] ?? "?"}
+                </span>
               )}
             </div>
             <span className="text-xs text-muted-foreground font-medium truncate max-w-[80px]">
-              {post.author?.name || "Anonymous"}
+              {post.author?.name ?? "Anonymous"}
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{readTime}m</span>
-            <span className="flex items-center gap-1"><Heart className="w-3 h-3" />{post.likeCount || 0}</span>
-            <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" />{post.commentCount || 0}</span>
+            <span className="flex items-center gap-1">
+              <Clock className="w-3 h-3" /> {readTime}m
+            </span>
+            <span className="flex items-center gap-1">
+              <Heart className="w-3 h-3" /> {post.likeCount ?? 0}
+            </span>
+            <span className="flex items-center gap-1">
+              <MessageSquare className="w-3 h-3" /> {post.commentCount ?? 0}
+            </span>
           </div>
         </div>
       </div>
     </Link>
+  )
+}
+
+interface PostMetaProps {
+  post: Post
+  readTime: number
+}
+
+function PostMeta({ post, readTime }: PostMetaProps) {
+  return (
+    <div className="mt-auto pt-5 border-t border-border/40 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center overflow-hidden border border-border/50">
+          {post.author?.avatar ? (
+            <img src={post.author.avatar} alt={post.author?.name} className="w-full h-full object-cover" />
+          ) : (
+            <UserIcon className="w-4 h-4 text-muted-foreground" />
+          )}
+        </div>
+        <div>
+          <p className="text-sm font-semibold leading-none">{post.author?.name ?? "Anonymous"}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {formatDate(post.publishedAt ?? post.createdAt)}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <Clock className="w-3.5 h-3.5" /> {readTime}m
+        </span>
+        <span className="flex items-center gap-1">
+          <Heart className="w-3.5 h-3.5" /> {post.likeCount ?? 0}
+        </span>
+      </div>
+    </div>
   )
 }
