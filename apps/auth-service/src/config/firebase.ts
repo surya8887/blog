@@ -1,14 +1,19 @@
-import * as admin from 'firebase-admin';
+import { initializeApp, cert, getApp, getApps } from 'firebase-admin/app';
+import { getAuth, Auth } from 'firebase-admin/auth';
 import { env } from './env.js';
 
-let app: admin.app.App | undefined;
+let app;
 
 try {
     if (env.FIREBASE_SERVICE_ACCOUNT) {
         const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
-        app = admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
+        if (!getApps().length) {
+            app = initializeApp({
+                credential: cert(serviceAccount)
+            });
+        } else {
+            app = getApp();
+        }
         console.log('Firebase Admin initialized successfully');
     } else {
         console.warn('Firebase Admin NOT initialized: FIREBASE_SERVICE_ACCOUNT is missing in .env');
@@ -19,4 +24,4 @@ try {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-export const auth = app ? admin.auth(app) : null;
+export const auth: Auth | null = app ? getAuth(app) : null;
