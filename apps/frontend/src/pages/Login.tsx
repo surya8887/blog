@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signInWithGoogle } from "@/services/firebase"
 import { useAuthStore } from "@/store/useAuthStore"
-import { api } from "@/lib/axios"
+import { api } from "@/api/axios"
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
