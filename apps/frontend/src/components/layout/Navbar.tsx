@@ -25,11 +25,12 @@ export function Navbar() {
     try {
       await logout() // Keep firebase logout if needed
       await api.post("/auth/logout")
-      clearAuth()
-      toast.success("Successfully logged out")
     } catch (error) {
       console.error(error)
-      toast.error("Failed to log out")
+      toast.error("Failed to log out from server")
+    } finally {
+      clearAuth()
+      toast.success("Successfully logged out")
     }
   }
 
