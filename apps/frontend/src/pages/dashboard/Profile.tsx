@@ -37,6 +37,12 @@ export const Profile = () => {
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [profileData, setProfileData] = useState<any>(null)
+  
+  // File upload states
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [coverFile, setCoverFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [coverPreview, setCoverPreview] = useState<string | null>(null)
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -81,7 +87,30 @@ export const Profile = () => {
       }
     }
     fetchProfile()
+    
+    // Cleanup object URLs to avoid memory leaks
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview)
+      if (coverPreview) URL.revokeObjectURL(coverPreview)
+    }
   }, [reset, isEditing]) // Re-fetch or re-reset when exiting edit mode
+
+  // Handlers for file selection
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setAvatarFile(file)
+      setAvatarPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setCoverFile(file)
+      setCoverPreview(URL.createObjectURL(file))
+    }
+  }
 
   const onSubmit = async (data: ProfileFormValues) => {
     setIsSaving(true)
@@ -109,14 +138,43 @@ export const Profile = () => {
         payload.birthDate = new Date(data.birthDate).toISOString()
       }
 
+      // 1. Update basic profile info
+      let currentProfile = null;
       const response = await api.put("/profiles/me", payload)
-      const updatedProfile = response.data.data
-      setProfileData(updatedProfile)
+      currentProfile = response.data.data
+
+      // 2. Upload Avatar if selected
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("profilePicture", avatarFile);
+        const avatarRes = await api.post("/profiles/me/avatar", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        currentProfile = avatarRes.data.data;
+      }
+
+      // 3. Upload Cover if selected
+      if (coverFile) {
+        const formData = new FormData();
+        formData.append("coverPicture", coverFile);
+        const coverRes = await api.post("/profiles/me/cover", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        currentProfile = coverRes.data.data;
+      }
+
+      setProfileData(currentProfile)
       
       // Update global auth store
       if (user) {
-        setUser({ ...user, profile: updatedProfile })
+        setUser({ ...user, profile: currentProfile })
       }
+      
+      // Reset file states
+      setAvatarFile(null)
+      setCoverFile(null)
+      setAvatarPreview(null)
+      setCoverPreview(null)
       
       toast.success("Profile updated successfully")
       setIsEditing(false)
@@ -245,9 +303,66 @@ export const Profile = () => {
             </Button>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-0 sm:p-6 space-y-8">
+            {/* Images Section (Visual Editor) */}
+            <div className="group">
+              {/* Cover Image Upload Area */}
+              <div className="relative h-48 w-full bg-gradient-to-r from-blue-500/20 to-purple-600/20 border-b sm:rounded-t-xl overflow-hidden">
+                {(coverPreview || profileData?.coverPicture) && (
+                  <img 
+                    src={coverPreview || profileData?.coverPicture} 
+                    alt="Cover Preview" 
+                    className="w-full h-full object-cover opacity-80" 
+                  />
+                )}
+                {/* Button for uploading cover */}
+                <Button 
+                  asChild
+                  size="sm" 
+                  variant="secondary" 
+                  className="absolute top-4 right-4 shadow-sm cursor-pointer hover:bg-secondary/80"
+                >
+                  <Label htmlFor="coverUpload" className="cursor-pointer flex items-center">
+                    <Camera className="h-4 w-4 mr-2" />
+                    Change Cover
+                  </Label>
+                </Button>
+                <Input 
+                  id="coverUpload" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleCoverChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Avatar Upload Area (Centered & Overlapping) */}
+              <div className="-mt-16 flex justify-center relative z-10 mb-6">
+                <div className="relative group/avatar">
+                  <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
+                    <AvatarImage src={avatarPreview || profileData?.profilePicture} className="object-cover" />
+                    <AvatarFallback className="text-4xl">{profileData?.firstName?.charAt(0) || "U"}</AvatarFallback>
+                  </Avatar>
+                  {/* Overlay for uploading avatar */}
+                  <Label 
+                    htmlFor="avatarUpload" 
+                    className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center cursor-pointer border-4 border-transparent"
+                  >
+                    <Camera className="h-8 w-8 text-white" />
+                  </Label>
+                  <Input 
+                    id="avatarUpload" 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Basic Details Section */}
-            <div className="space-y-4">
+            <div className="space-y-4 px-6 sm:px-0">
               <h3 className="font-medium text-lg border-b pb-2">Basic Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -270,7 +385,7 @@ export const Profile = () => {
             </div>
 
             {/* Contact & Personal Section */}
-            <div className="space-y-4">
+            <div className="space-y-4 px-6 sm:px-0">
               <h3 className="font-medium text-lg border-b pb-2">Contact & Personal</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -297,7 +412,7 @@ export const Profile = () => {
             </div>
 
             {/* Social Links Section */}
-            <div className="space-y-4">
+            <div className="space-y-4 px-6 sm:px-0">
               <h3 className="font-medium text-lg border-b pb-2">Social Links</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2 relative">
@@ -324,7 +439,7 @@ export const Profile = () => {
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end pt-4 gap-4 border-t">
+            <div className="flex justify-end pt-4 gap-4 border-t px-6 sm:px-0">
               <Button type="button" variant="outline" onClick={() => setIsEditing(false)} disabled={isSaving}>
                 Cancel
               </Button>
