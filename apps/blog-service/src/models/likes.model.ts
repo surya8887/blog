@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types, } from "mongoose";
 
 export interface IPostLike extends Document {
     user: {
-        userId: Types.ObjectId;
+        userId: string;
         name: string;
         avatar?: string;
     };
@@ -13,7 +13,7 @@ const postLikeSchema = new Schema<IPostLike>(
     {
         user: {
             userId: {
-                type: Schema.Types.ObjectId,
+                type: String,
                 required: true,
                 index: true,
             },

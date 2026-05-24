@@ -30,6 +30,7 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
     req.user = decoded;
     next();
   } catch (error) {
+    console.error("JWT VERIFY ERROR:", error);
     return next(new ApiError("Invalid token or token expired", 401));
   }
 });

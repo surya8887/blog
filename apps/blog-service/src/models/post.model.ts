@@ -9,7 +9,7 @@ export interface IPost extends Document {
   coverImage?: string;
 
   author: {
-    userId: Types.ObjectId;
+    userId: string;
     name: string;
     avatar?: string;
   };
@@ -57,7 +57,7 @@ const postSchema = new Schema<IPost>(
 
     author: {
       userId: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true,
         index: true,
       },
