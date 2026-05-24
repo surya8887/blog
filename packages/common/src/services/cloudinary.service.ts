@@ -24,7 +24,8 @@ export class CloudinaryService {
         options,
         (error, result) => {
           if (error || !result) {
-            return reject(new ApiError("Failed to upload image to Cloudinary", 500));
+            console.error("Cloudinary Upload Error:", error);
+            return reject(new ApiError(`Failed to upload image to Cloudinary: ${error?.message || 'Unknown error'}`, 500));
           }
           resolve(result);
         }

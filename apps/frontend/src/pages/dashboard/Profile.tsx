@@ -49,7 +49,7 @@ export const Profile = () => {
     const fetchProfile = async () => {
       try {
         const response = await api.get("/profiles/me")
-        setProfileData(response.data.data)
+        setProfileData(response.data.data.profile)
       } catch (error) {
         toast.error("Failed to load profile details")
       } finally {
@@ -142,9 +142,9 @@ export const Profile = () => {
       }
 
       // 1. Update basic profile info
-      let currentProfile = null;
+      let fullUserObject = null;
       const response = await api.put("/profiles/me", payload)
-      currentProfile = response.data.data
+      fullUserObject = response.data.data
 
       // 2. Upload Avatar if selected
       if (avatarFile) {
@@ -153,7 +153,7 @@ export const Profile = () => {
         const avatarRes = await api.post("/profiles/me/avatar", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
-        currentProfile = avatarRes.data.data;
+        fullUserObject = avatarRes.data.data;
       }
 
       // 3. Upload Cover if selected
@@ -163,14 +163,15 @@ export const Profile = () => {
         const coverRes = await api.post("/profiles/me/cover", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
-        currentProfile = coverRes.data.data;
+        fullUserObject = coverRes.data.data;
       }
 
-      setProfileData(currentProfile)
+      // Set the local profile view to the nested profile object
+      setProfileData(fullUserObject.profile)
       
-      // Update global auth store
+      // Update global auth store with the full user object
       if (user) {
-        setUser({ ...user, profile: currentProfile })
+        setUser(fullUserObject)
       }
       
       // Reset file states
@@ -202,9 +203,9 @@ export const Profile = () => {
     <div className="space-y-6">
       {/* View Mode */}
       {!isEditing ? (
-        <div className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden">
+        <div className="rounded-2xl border bg-card text-card-foreground shadow-sm overflow-hidden pb-8">
           {/* Cover Image */}
-          <div className="h-48 w-full bg-gradient-to-r from-blue-500 to-purple-600 relative">
+          <div className="h-56 w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative">
             {profileData?.coverPicture && (
               <img 
                 src={profileData.coverPicture} 
@@ -212,10 +213,11 @@ export const Profile = () => {
                 className="w-full h-full object-cover"
               />
             )}
+            <div className="absolute inset-0 bg-black/10"></div>
             <Button 
               size="sm" 
               variant="secondary" 
-              className="absolute top-4 right-4 shadow-sm"
+              className="absolute top-4 right-4 shadow-md bg-background/80 backdrop-blur-sm hover:bg-background/90 text-foreground border-none"
               onClick={() => setIsEditing(true)}
             >
               <Edit2 className="h-4 w-4 mr-2" />
@@ -224,74 +226,102 @@ export const Profile = () => {
           </div>
 
           {/* Profile Details Container */}
-          <div className="px-6 pb-6 sm:px-10 relative">
+          <div className="px-6 sm:px-12 relative flex flex-col md:flex-row gap-6 md:gap-10">
             {/* Avatar overlapping cover */}
-            <div className="-mt-16 sm:-mt-20 mb-4 flex justify-between items-end">
-              <Avatar className="h-32 w-32 sm:h-40 sm:w-40 border-4 border-background shadow-lg">
+            <div className="-mt-20 md:-mt-24 flex-shrink-0 relative z-10">
+              <Avatar className="h-40 w-40 md:h-48 md:w-48 border-4 border-card shadow-xl ring-2 ring-muted/20">
                 <AvatarImage src={profileData?.profilePicture} alt={profileData?.firstName} className="object-cover" />
-                <AvatarFallback className="text-4xl">{profileData?.firstName?.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="text-5xl font-light text-muted-foreground bg-muted">
+                  {profileData?.firstName?.charAt(0) || "U"}
+                </AvatarFallback>
               </Avatar>
             </div>
 
-            {/* Name and Bio */}
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold">{profileData?.firstName} {profileData?.lastName}</h1>
-              {profileData?.bio ? (
-                <p className="text-muted-foreground mt-2 max-w-2xl">{profileData.bio}</p>
-              ) : (
-                <p className="text-muted-foreground italic mt-2 opacity-60">No bio provided.</p>
-              )}
-            </div>
+            {/* Name, Bio and Links */}
+            <div className="flex-grow pt-4 md:pt-6">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                    {profileData?.firstName} {profileData?.lastName}
+                  </h1>
+                  {profileData?.bio ? (
+                    <p className="text-muted-foreground mt-3 max-w-2xl text-lg leading-relaxed">{profileData.bio}</p>
+                  ) : (
+                    <p className="text-muted-foreground italic mt-3 opacity-60">No bio provided.</p>
+                  )}
+                </div>
 
-            {/* Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 py-4 border-t border-border">
-              <div className="flex items-center text-muted-foreground">
-                <MapPin className="h-5 w-5 mr-3 text-primary/70" />
-                <span>{profileData?.address || "No address provided"}</span>
+                {/* Social Links as modern pills */}
+                <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
+                  {socials.facebook && (
+                    <a href={socials.facebook} target="_blank" rel="noreferrer" className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-500/10 text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                  )}
+                  {socials.instagram && (
+                    <a href={socials.instagram} target="_blank" rel="noreferrer" className="flex items-center justify-center h-10 w-10 rounded-full bg-pink-500/10 text-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                    </a>
+                  )}
+                  {socials.twitter && (
+                    <a href={socials.twitter} target="_blank" rel="noreferrer" className="flex items-center justify-center h-10 w-10 rounded-full bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                    </a>
+                  )}
+                  {socials.linkedin && (
+                    <a href={socials.linkedin} target="_blank" rel="noreferrer" className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-700/10 text-blue-700 hover:bg-blue-700 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center text-muted-foreground">
-                <Phone className="h-5 w-5 mr-3 text-primary/70" />
-                <span>{profileData?.phone || "No phone number provided"}</span>
-              </div>
-              <div className="flex items-center text-muted-foreground">
-                <Calendar className="h-5 w-5 mr-3 text-primary/70" />
-                <span>
-                  {profileData?.birthDate 
-                    ? new Date(profileData.birthDate).toLocaleDateString() 
-                    : "No birth date provided"}
-                </span>
-              </div>
-              <div className="flex items-center text-muted-foreground">
-                <UserIcon className="h-5 w-5 mr-3 text-primary/70" />
-                <span>{profileData?.gender || "No gender specified"}</span>
-              </div>
-            </div>
 
-            {/* Social Links */}
-            <div className="pt-6 border-t border-border flex gap-4">
-              {socials.facebook && (
-                <a href={socials.facebook} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
-                  <Globe className="h-6 w-6" />
-                </a>
-              )}
-              {socials.instagram && (
-                <a href={socials.instagram} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-pink-600 transition-colors">
-                  <Camera className="h-6 w-6" />
-                </a>
-              )}
-              {socials.twitter && (
-                <a href={socials.twitter} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-blue-400 transition-colors">
-                  <MessageCircle className="h-6 w-6" />
-                </a>
-              )}
-              {socials.linkedin && (
-                <a href={socials.linkedin} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-blue-700 transition-colors">
-                  <Briefcase className="h-6 w-6" />
-                </a>
-              )}
-              {(!socials.facebook && !socials.instagram && !socials.twitter && !socials.linkedin) && (
-                <span className="text-sm text-muted-foreground italic">No social links added.</span>
-              )}
+              {/* Details Grid - Modern Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                <div className="flex items-center p-4 rounded-xl bg-muted/40 border border-border/50 hover:bg-muted/60 transition-colors">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 text-primary">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Location</p>
+                    <p className="text-sm font-medium">{profileData?.address || "Not specified"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center p-4 rounded-xl bg-muted/40 border border-border/50 hover:bg-muted/60 transition-colors">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 text-primary">
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Phone</p>
+                    <p className="text-sm font-medium">{profileData?.phone || "Not specified"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center p-4 rounded-xl bg-muted/40 border border-border/50 hover:bg-muted/60 transition-colors">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 text-primary">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Birth Date</p>
+                    <p className="text-sm font-medium">
+                      {profileData?.birthDate 
+                        ? new Date(profileData.birthDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) 
+                        : "Not specified"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center p-4 rounded-xl bg-muted/40 border border-border/50 hover:bg-muted/60 transition-colors">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 text-primary">
+                    <UserIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Gender</p>
+                    <p className="text-sm font-medium capitalize">{profileData?.gender || "Not specified"}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
