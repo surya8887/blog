@@ -44,7 +44,7 @@ export function SingleBlog() {
   const commentSectionRef = useRef<HTMLDivElement>(null)
   const commentInputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Fetch post
+  // Fetch post + initial like status
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -54,6 +54,16 @@ export function SingleBlog() {
         setPost(data)
         setLikeCount(data.likeCount || 0)
         setCommentCount(data.commentCount || 0)
+
+        // Fetch whether current user has liked this post
+        if (user) {
+          try {
+            const likeRes = await api.get(`/likes/status/${id}`)
+            setIsLiked(likeRes.data.data.isLiked)
+          } catch {
+            // Not critical — default stays false
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch post:", error)
         navigate("/blogs")
@@ -62,7 +72,7 @@ export function SingleBlog() {
       }
     }
     if (id) fetchPost()
-  }, [id, navigate])
+  }, [id, navigate, user])
 
   // Fetch comments
   const fetchComments = async () => {

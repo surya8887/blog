@@ -38,6 +38,15 @@ export const toggleLikeService = async (postId: string, user: any) => {
     return isLiked;
 };
 
+export const getLikeStatusService = async (postId: string, userId: string) => {
+    const existing = await PostLike.findOne({
+        "user.userId": userId,
+        post: new Types.ObjectId(postId)
+    });
+    return !!existing;
+};
+
+
 export const getPostLikesService = async (postId: string, query: any) => {
     const { page = 1, limit = 10 } = query;
 
