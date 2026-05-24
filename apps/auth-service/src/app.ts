@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
+import "./config/cloudinary.js";
 import type { Application } from "express";
 
 export const app:Application = express();

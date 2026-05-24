@@ -323,19 +323,6 @@ export const Profile = () => {
                   asChild
                   size="sm" 
                   variant="secondary" 
-{statusCode: 500, data: null, message: "Internal Server Error", success: false}
-data
-: 
-null
-message
-: 
-"Internal Server Error"
-statusCode
-: 
-500
-success
-: 
-false
                   className="absolute top-4 right-4 shadow-sm cursor-pointer hover:bg-secondary/80"
                 >
                   <Label htmlFor="coverUpload" className="cursor-pointer flex items-center">
