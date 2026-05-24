@@ -19,8 +19,6 @@ const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   bio: z.string().max(500, "Bio is too long").optional().nullable(),
-  profilePicture: z.string().url("Must be a valid URL").or(z.literal("")).optional().nullable(),
-  coverPicture: z.string().url("Must be a valid URL").or(z.literal("")).optional().nullable(),
   phone: z.string().optional().nullable(),
   birthDate: z.string().optional().nullable(),
   gender: z.string().optional().nullable(),
@@ -67,8 +65,6 @@ export const Profile = () => {
           firstName: data.firstName || "",
           lastName: data.lastName || "",
           bio: data.bio || "",
-          profilePicture: data.profilePicture || "",
-          coverPicture: data.coverPicture || "",
           phone: data.phone || "",
           birthDate: formattedDate,
           gender: data.gender || "",
@@ -102,8 +98,6 @@ export const Profile = () => {
         firstName: data.firstName,
         lastName: data.lastName,
         bio: data.bio || undefined,
-        profilePicture: data.profilePicture || undefined,
-        coverPicture: data.coverPicture || undefined,
         phone: data.phone || undefined,
         gender: data.gender || undefined,
         address: data.address || undefined,
@@ -252,23 +246,6 @@ export const Profile = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-8">
-            {/* Images Section */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg border-b pb-2">Images</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="profilePicture">Avatar URL</Label>
-                  <Input id="profilePicture" placeholder="https://example.com/avatar.jpg" {...register("profilePicture")} />
-                  {errors.profilePicture && <p className="text-sm text-destructive">{errors.profilePicture.message}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coverPicture">Cover Image URL</Label>
-                  <Input id="coverPicture" placeholder="https://example.com/cover.jpg" {...register("coverPicture")} />
-                  {errors.coverPicture && <p className="text-sm text-destructive">{errors.coverPicture.message}</p>}
-                </div>
-              </div>
-            </div>
-
             {/* Basic Details Section */}
             <div className="space-y-4">
               <h3 className="font-medium text-lg border-b pb-2">Basic Details</h3>

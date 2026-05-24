@@ -11,7 +11,10 @@ const envSchema = z.object({
     REFRESH_TOKEN : z.string().min(1),
     REFRESH_TOKEN_EXPIRY : z.string().min(1),
     JWT_SECRET : z.string().min(1),
-    FIREBASE_SERVICE_ACCOUNT : z.string().optional()
+    FIREBASE_SERVICE_ACCOUNT : z.string().optional(),
+    CLOUDINARY_CLOUD_NAME: z.string().optional(),
+    CLOUDINARY_API_KEY: z.string().optional(),
+    CLOUDINARY_API_SECRET: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);
