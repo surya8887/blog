@@ -14,6 +14,7 @@ export interface IPost extends Document {
     avatar?: string;
   };
   category?: Types.ObjectId;
+  tags?: string[];
   status: "draft" | "published" | "archived";
   publishedAt?: Date;
 
@@ -75,6 +76,10 @@ const postSchema = new Schema<IPost>(
       ref: "Category",
       index: true,
     },
+    tags: [{
+      type: String,
+      trim: true
+    }],
 
     status: {
       type: String,

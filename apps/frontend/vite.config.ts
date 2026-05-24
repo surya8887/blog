@@ -18,6 +18,22 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api/v1/posts': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
+      '/api/v1/categories': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
+      '/api/v1/comments': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
+      '/api/v1/likes': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,

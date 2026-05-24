@@ -1,17 +1,36 @@
 import { Post } from "../models/post.model.js";
+import { Category } from "../models/category.model.js";
 import { ApiError } from "@blog/common";
 import { aggregatePaginate } from "../utils/pagination.js";
 import { Types } from "mongoose";
 import type { PipelineStage } from "mongoose";
 
 export const createPostService = async (data: any, user: any) => {
-    const existingPost = await Post.findOne({ slug: data.slug });
+    // Generate slug from title if not provided
+    const slug = data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    
+    const existingPost = await Post.findOne({ slug });
     if (existingPost) {
-        throw new ApiError("Post with this slug already exists", 400);
+        throw new ApiError("Post with this title/slug already exists", 400);
+    }
+
+    let categoryId = data.category;
+    
+    // If category is provided as a string (and not a valid ObjectId), try to find or create it
+    if (data.category && !Types.ObjectId.isValid(data.category)) {
+        let categoryDoc = await Category.findOne({ name: { $regex: new RegExp(`^${data.category}$`, 'i') } });
+        if (!categoryDoc) {
+            // Auto-create category if it doesn't exist
+            const catSlug = data.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            categoryDoc = await Category.create({ name: data.category, slug: catSlug });
+        }
+        categoryId = categoryDoc._id;
     }
 
     return await Post.create({
         ...data,
+        slug,
+        category: categoryId,
         status: data.status || "draft",
         author: {
             userId: user.id,
@@ -33,6 +52,22 @@ export const updatePostService = async (id: string, data: any, userId: string) =
     }
 
     const updatedData = { ...data };
+    
+    // Update slug if title changes
+    if (updatedData.title && updatedData.title !== post.title && !updatedData.slug) {
+        updatedData.slug = updatedData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    }
+
+    // Handle string categories
+    if (updatedData.category && !Types.ObjectId.isValid(updatedData.category)) {
+        let categoryDoc = await Category.findOne({ name: { $regex: new RegExp(`^${updatedData.category}$`, 'i') } });
+        if (!categoryDoc) {
+            const catSlug = updatedData.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            categoryDoc = await Category.create({ name: updatedData.category, slug: catSlug });
+        }
+        updatedData.category = categoryDoc._id;
+    }
+
     if (updatedData.status === "published" && post.status !== "published") {
         updatedData.publishedAt = new Date();
     }

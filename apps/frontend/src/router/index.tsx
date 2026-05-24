@@ -7,9 +7,11 @@ import { Login } from "@/pages/Login"
 import { Signup } from "@/pages/Signup"
 import { About } from "@/pages/About"
 import { Blogs } from "@/pages/Blogs"
+import { Categories } from "@/pages/Categories"
 import { DashboardOverview } from "@/pages/dashboard/DashboardOverview"
 import { Profile } from "@/pages/dashboard/Profile"
 import { Settings } from "@/pages/dashboard/Settings"
+import { CreateBlog } from "@/pages/dashboard/CreateBlog"
 
 export const AppRouter = () => {
   return (
@@ -24,12 +26,14 @@ export const AppRouter = () => {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/blogs" element={<Blogs />} />
+              <Route path="/categories" element={<Categories />} />
               
               {/* Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardOverview />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="create-blog" element={<CreateBlog />} />
               </Route>
             </Routes>
           </MainLayout>
