@@ -41,7 +41,8 @@ export function Login() {
       const userData = response.data.data.user
       setUser(userData)
       toast.success("Successfully logged in!")
-      navigate(userData.role === "admin" ? "/admin" : "/")
+      const role = userData.role?.toLowerCase()
+      navigate(role === "admin" || role === "superadmin" ? "/admin" : "/")
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to log in. Please check your credentials.")
     } finally {
@@ -59,7 +60,8 @@ export function Login() {
       const userData = response.data.data.user
       setUser(userData)
       toast.success("Successfully logged in with Google!")
-      navigate(userData.role === "admin" ? "/admin" : "/")
+      const role = userData.role?.toLowerCase()
+      navigate(role === "admin" || role === "superadmin" ? "/admin" : "/")
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to log in with Google.")
     } finally {

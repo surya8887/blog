@@ -22,7 +22,8 @@ export const AdminGuard = ({ children }: AdminGuardProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  if (user.role !== "admin") {
+  const role = user.role?.toLowerCase()
+  if (role !== "admin" && role !== "superadmin") {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 text-center px-4">
         <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">

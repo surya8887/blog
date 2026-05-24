@@ -36,8 +36,15 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
 });
 
 export const restrictTo = (...roles: string[]) => {
+  const allowed = roles.map((r) => r.toLowerCase());
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    const userRole = req.user?.role?.toLowerCase();
+    if (!userRole) {
+      return next(new ApiError("You are not logged in! Please log in to get access.", 401));
+    }
+    // SUPERADMIN inherits all admin privileges
+    const isAllowed = allowed.includes(userRole) || (allowed.includes("admin") && userRole === "superadmin");
+    if (!isAllowed) {
       return next(new ApiError("You do not have permission to perform this action", 403));
     }
     next();
