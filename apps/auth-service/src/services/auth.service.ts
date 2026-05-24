@@ -56,7 +56,16 @@ export const loginService = async (data: any) => {
         include: { profile: true }
     });
 
-    if (!user || !user.password || !checkPassword(password, user.password)) {
+    if (!user) {
+        throw new ApiError("Invalid email or password", 401);
+    }
+
+    // If user exists but has no password, they signed up with Google
+    if (!user.password) {
+        throw new ApiError("This email is registered with Google. Please use 'Continue with Google' to log in.", 400);
+    }
+
+    if (!checkPassword(password, user.password)) {
         throw new ApiError("Invalid email or password", 401);
     }
 
