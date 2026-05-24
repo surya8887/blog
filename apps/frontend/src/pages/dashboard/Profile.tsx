@@ -44,42 +44,12 @@ export const Profile = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
-  })
-
   // Fetch complete profile on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await api.get("/profiles/me")
-        const data = response.data.data
-        setProfileData(data)
-        
-        // Parse socialLinks safely
-        const socials = data.socialLinks || {}
-        
-        // Format birthDate to YYYY-MM-DD for date input
-        let formattedDate = ""
-        if (data.birthDate) {
-          try {
-            formattedDate = new Date(data.birthDate).toISOString().split('T')[0]
-          } catch (e) {}
-        }
-
-        reset({
-          firstName: data.firstName || "",
-          lastName: data.lastName || "",
-          bio: data.bio || "",
-          phone: data.phone || "",
-          birthDate: formattedDate,
-          gender: data.gender || "",
-          address: data.address || "",
-          facebookUrl: socials.facebook || "",
-          instagramUrl: socials.instagram || "",
-          linkedinUrl: socials.linkedin || "",
-          twitterUrl: socials.twitter || "",
-        })
+        setProfileData(response.data.data)
       } catch (error) {
         toast.error("Failed to load profile details")
       } finally {
@@ -93,7 +63,40 @@ export const Profile = () => {
       if (avatarPreview) URL.revokeObjectURL(avatarPreview)
       if (coverPreview) URL.revokeObjectURL(coverPreview)
     }
-  }, [reset, isEditing]) // Re-fetch or re-reset when exiting edit mode
+  }, []) // Fetch once on mount
+
+  // Initialize react-hook-form
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+  })
+
+  // Synchronously reset form values whenever profileData or isEditing changes
+  useEffect(() => {
+    if (profileData && isEditing) {
+      const socials = profileData.socialLinks || {}
+      
+      let formattedDate = ""
+      if (profileData.birthDate) {
+        try {
+          formattedDate = new Date(profileData.birthDate).toISOString().split('T')[0]
+        } catch (e) {}
+      }
+
+      reset({
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
+        bio: profileData.bio || "",
+        phone: profileData.phone || "",
+        birthDate: formattedDate,
+        gender: profileData.gender || "",
+        address: profileData.address || "",
+        facebookUrl: socials.facebook || "",
+        instagramUrl: socials.instagram || "",
+        linkedinUrl: socials.linkedin || "",
+        twitterUrl: socials.twitter || "",
+      })
+    }
+  }, [profileData, isEditing, reset])
 
   // Handlers for file selection
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -320,6 +323,19 @@ export const Profile = () => {
                   asChild
                   size="sm" 
                   variant="secondary" 
+{statusCode: 500, data: null, message: "Internal Server Error", success: false}
+data
+: 
+null
+message
+: 
+"Internal Server Error"
+statusCode
+: 
+500
+success
+: 
+false
                   className="absolute top-4 right-4 shadow-sm cursor-pointer hover:bg-secondary/80"
                 >
                   <Label htmlFor="coverUpload" className="cursor-pointer flex items-center">

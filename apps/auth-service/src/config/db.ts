@@ -2,6 +2,8 @@ import "dotenv/config";
 import { env } from "./env.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js"; //#ignore
+import pg from "pg";
+const { Pool } = pg;
 
 /**
  * PostgreSQL connection string loaded from environment variables.
@@ -14,12 +16,12 @@ if (!connectionString) {
   );
 }
 
+const pool = new Pool({ connectionString });
+
 /**
  * Prisma PostgreSQL adapter configuration.
  */
-const adapter = new PrismaPg({
-  connectionString,
-});
+const adapter = new PrismaPg(pool);
 
 /**
  * Prisma Client instance.
