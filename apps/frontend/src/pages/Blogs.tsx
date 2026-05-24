@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { Loader2, Search } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
-import { Input } from "@/components/ui/input"
 import { CategoryPills } from "@/components/blog/CategoryPills"
 import { PostCard } from "@/components/blog/PostCard"
 import { categoriesApi } from "@/api/categories.api"
