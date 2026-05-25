@@ -21,11 +21,13 @@ export const cacheMiddleware = (ttl: number) => {
       if (cachedData) {
         console.log(`[Redis] Cache hit for ${key}`);
         res.setHeader("X-Cache", "HIT");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         return res.status(200).json(JSON.parse(cachedData));
       }
 
       console.log(`[Redis] Cache miss for ${key}`);
       res.setHeader("X-Cache", "MISS");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
       // Intercept the res.json method to capture the output
       const originalJson = res.json.bind(res);
