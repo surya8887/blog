@@ -279,3 +279,86 @@
 /* Hide scrollbar utility */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Jodit Editor Overrides ──────────────────── */
+/* Make it match our sleek dark theme perfectly */
+.dark .jodit-container.jodit.jodit_theme_dark {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.dark .jodit_theme_dark .jodit-toolbar__box {
+    background-color: oklch(0.14 0.018 285 / 50%) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(1 0 0 / 9%) !important;
+    border-radius: 0.75rem !important;
+    margin-bottom: 1rem;
+    padding: 0.25rem !important;
+}
+
+.dark .jodit_theme_dark .jodit-workplace {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.dark .jodit_theme_dark .jodit-wysiwyg {
+    background-color: transparent !important;
+    color: oklch(0.97 0.005 285) !important;
+    padding: 1rem 0 !important;
+}
+
+.dark .jodit_theme_dark .jodit-toolbar-button__button {
+    color: oklch(0.85 0.01 285) !important;
+    border-radius: 0.4rem !important;
+}
+
+.dark .jodit_theme_dark .jodit-toolbar-button__button:hover {
+    background-color: oklch(1 0 0 / 10%) !important;
+}
+
+.dark .jodit-status-bar {
+    background-color: transparent !important;
+    border: none !important;
+    color: oklch(0.62 0.05 285) !important;
+}
+
+/* Make it match our sleek light theme perfectly */
+html:not(.dark) .jodit-container.jodit.jodit_theme_default {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+html:not(.dark) .jodit_theme_default .jodit-toolbar__box {
+    background-color: oklch(1 0 0 / 70%) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(0.91 0.01 285) !important;
+    border-radius: 0.75rem !important;
+    margin-bottom: 1rem;
+    padding: 0.25rem !important;
+}
+
+html:not(.dark) .jodit_theme_default .jodit-workplace {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+html:not(.dark) .jodit_theme_default .jodit-wysiwyg {
+    background-color: transparent !important;
+    color: oklch(0.13 0.02 285) !important;
+    padding: 1rem 0 !important;
+}
+
+html:not(.dark) .jodit_theme_default .jodit-toolbar-button__button {
+    color: oklch(0.25 0.05 285) !important;
+    border-radius: 0.4rem !important;
+}
+
+html:not(.dark) .jodit_theme_default .jodit-toolbar-button__button:hover {
+    background-color: oklch(0.96 0.01 285) !important;
+}
+
+html:not(.dark) .jodit-status-bar {
+    background-color: transparent !important;
+    border: none !important;
+    color: oklch(0.52 0.04 285) !important;
+}

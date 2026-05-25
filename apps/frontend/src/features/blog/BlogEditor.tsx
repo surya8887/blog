@@ -3,6 +3,7 @@ import { ArrowLeft, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import JoditEditor from "jodit-react"
+import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/shared/Spinner"
@@ -67,6 +68,9 @@ export function BlogEditor({
   shell = "card",
 }: BlogEditorProps) {
   const navigate = useNavigate()
+  const { theme } = useTheme()
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  
   const merged = { ...defaultInitial, ...initialValues }
 
   const [title, setTitle] = useState(merged.title)
@@ -87,13 +91,13 @@ export function BlogEditor({
   const joditConfig = useMemo(() => ({
     readonly: false,
     placeholder: "Tell your story…",
-    theme: "dark",
+    theme: isDark ? "dark" : "default",
     minHeight: 400,
     style: {
       background: "transparent",
       color: "inherit"
     }
-  }), [])
+  }), [isDark])
 
   useEffect(() => {
     setTitle(merged.title)
