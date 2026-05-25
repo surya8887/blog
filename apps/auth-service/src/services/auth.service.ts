@@ -176,10 +176,21 @@ export const googleLoginService = async (idToken: string) => {
             refreshToken
         };
     } catch (error: any) {
-        console.error("Firebase verifyIdToken error:", error);
+        console.error("====================== GOOGLE LOGIN ERROR ======================");
+        console.error("Firebase verifyIdToken / Prisma error:", error);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+        console.error("================================================================");
+        
         if (error instanceof ApiError) {
             throw error;
         }
+        
+        // Don't mask database/Prisma errors as invalid token
+        if (error?.name === 'PrismaClientKnownRequestError' || error?.name === 'PrismaClientInitializationError') {
+            throw new ApiError(`Database error during Google Login: ${error.message}`, 500);
+        }
+        
         throw new ApiError("Invalid or expired Google ID token", 401);
     }
 };
