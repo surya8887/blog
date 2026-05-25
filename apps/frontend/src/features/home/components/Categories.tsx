@@ -14,7 +14,14 @@ export function Categories() {
     categoriesApi
       .list()
       .then((items) => {
-        if (!cancelled) setCategories(items.slice(0, 6))
+        if (!cancelled) {
+          const flat = items.reduce((acc, cat) => {
+            acc.push(cat)
+            if (cat.children?.length) acc.push(...cat.children)
+            return acc
+          }, [] as typeof items)
+          setCategories(flat.slice(0, 6))
+        }
       })
       .catch((err) => console.error("Failed to fetch categories:", err))
     return () => {

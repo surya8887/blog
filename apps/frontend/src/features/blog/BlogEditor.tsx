@@ -112,7 +112,12 @@ export function BlogEditor({
       .list()
       .then((items) => {
         if (cancelled) return
-        const names = items.map((c) => c.name)
+        const flat = items.reduce((acc, cat) => {
+          acc.push(cat)
+          if (cat.children?.length) acc.push(...cat.children)
+          return acc
+        }, [] as typeof items)
+        const names = flat.map((c) => c.name)
         setCategories(names)
         setSelectedCategory((current) => current || names[0] || "")
       })
