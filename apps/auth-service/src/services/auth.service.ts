@@ -1,5 +1,7 @@
 import { prisma } from "../config/db.js";
 import { ApiError } from "@blog/common";
+import jwt from "jsonwebtoken";
+import { env } from "../config/env.js";
 import { 
     hashPassword, 
     checkPassword, 
@@ -207,4 +209,45 @@ export const changePasswordService = async (userId: string, data: any) => {
         where: { id: userId },
         data: { password: hashedPassword }
     });
+};
+
+export const refreshTokenService = async (token: string) => {
+    if (!token) {
+        throw new ApiError("No refresh token provided", 401);
+    }
+
+    try {
+        const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+        
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.id },
+            include: { profile: true }
+        });
+
+        if (!user || !user.isActive) {
+            throw new ApiError("User not found or inactive", 401);
+        }
+
+        if (user.refreshToken !== token) {
+            throw new ApiError("Invalid refresh token", 401);
+        }
+
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { refreshToken }
+        });
+
+        const { password: _, refreshToken: __, ...userWithoutSensitiveInfo } = user;
+
+        return {
+            user: userWithoutSensitiveInfo,
+            accessToken,
+            refreshToken
+        };
+    } catch (error) {
+        throw new ApiError("Invalid or expired refresh token", 401);
+    }
 };

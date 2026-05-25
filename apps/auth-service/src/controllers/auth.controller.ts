@@ -5,7 +5,8 @@ import {
     loginService,
     logoutService,
     googleLoginService,
-    changePasswordService
+    changePasswordService,
+    refreshTokenService
 } from "../services/auth.service.js";
 import { setTokenCookies, clearTokenCookies } from "../utils/token.utils.js";
 
@@ -37,4 +38,11 @@ export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
 export const changePassword = asyncHandler(async (req: Request, res: Response) => {
     await changePasswordService(req.user.id, req.body);
     res.status(200).json(new ApiResponse(200, null, "Password changed successfully"));
+});
+
+export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const token = req.cookies?.refreshToken;
+    const result = await refreshTokenService(token);
+    setTokenCookies({ res, accessToken: result.accessToken, refreshToken: result.refreshToken });
+    res.status(200).json(new ApiResponse(200, result, "Token refreshed successfully"));
 });

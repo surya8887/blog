@@ -31,7 +31,7 @@ export const Settings = () => {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState("")
 
-  const logout = useAuthStore((state) => state.logout)
+  const logout = useAuthStore((state) => state.clearAuth)
   const navigate = useNavigate()
 
   const handleChangePassword = async (e: React.FormEvent) => {
