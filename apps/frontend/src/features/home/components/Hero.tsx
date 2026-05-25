@@ -2,12 +2,14 @@ import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Background3D } from "./Background3D"
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
-      <div className="container px-4 md:px-6 mx-auto">
+      <Background3D />
+      <div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background/80 to-background"></div>
+      <div className="container px-4 md:px-6 mx-auto relative z-10">
         <div className="flex flex-col items-center text-center space-y-8">
 
           
