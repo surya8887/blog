@@ -15,3 +15,5 @@ redis.on('error', (err) => {
 });
 
 export default redis;
+
+export * from './middleware/cache.js';

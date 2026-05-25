@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { getAllUsersService, updateUserService } from "../services/user.service.js";
 import { asyncHandler } from "@blog/common";
+import { clearCache } from "@blog/redis-client";
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const users = await getAllUsersService(req.query);
@@ -14,6 +15,10 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response, next
 export const updateUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id as string;
     const updatedUser = await updateUserService(id, req.body);
+
+    // Invalidate the admin users cache
+    await clearCache("cache:/api/v1/users/admin/all*");
+
     res.status(200).json({
         success: true,
         data: updatedUser,

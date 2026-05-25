@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { protect, restrictTo } from "@blog/common";
 import { validate } from "../middlewares/validate.middleware.js";
+import { cacheMiddleware } from "@blog/redis-client";
 import { 
     createPostSchema, 
     updatePostSchema, 
@@ -21,7 +22,7 @@ import {
 const router = Router();
 
 router.route("/")
-    .get(validate(getAllPostsSchema), getAllPosts)
+    .get(cacheMiddleware(300), validate(getAllPostsSchema), getAllPosts)
     .post(protect, validate(createPostSchema), createPost);
 
 // GET /api/v1/posts/my-posts — returns all posts by the logged-in user
@@ -33,7 +34,7 @@ router.route("/admin/all")
     .get(protect, restrictTo("admin"), adminGetAllPosts);
 
 router.route("/:id")
-    .get(validate(getSinglePostSchema), getSinglePost)
+    .get(cacheMiddleware(300), validate(getSinglePostSchema), getSinglePost)
     .put(protect, validate(updatePostSchema), updatePost)
     .delete(protect, validate(deletePostSchema), deletePost);
 
