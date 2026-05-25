@@ -160,7 +160,7 @@ export function Blogs() {
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-            Discover the latest articles, tutorials, and deep-dives into web development, design, and software architecture.
+            Discover the latest articles, stories, and deep-dives from our community.
           </p>
         </div>
       </div>

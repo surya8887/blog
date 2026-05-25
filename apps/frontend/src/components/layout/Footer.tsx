@@ -9,10 +9,10 @@ export function Footer() {
           <div className="md:col-span-1 space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <Hexagon className="h-6 w-6 text-primary" />
-              <span className="inline-block font-bold text-xl">DevBlog</span>
+              <span className="inline-block font-bold text-xl">BlogSpace</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              A premium modern platform for developers and designers to share their knowledge, stories, and ideas.
+              A premium modern platform for writers and creators to share their knowledge, stories, and ideas.
             </p>
             <div className="flex gap-4 pt-2">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -62,10 +62,10 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} DevBlog Inc. All rights reserved.
+            © {new Date().getFullYear()} BlogSpace Inc. All rights reserved.
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
-             <span>Made with ❤️ for developers</span>
+             <span>Made with ❤️ for creators</span>
           </div>
         </div>
       </div>

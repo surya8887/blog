@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Code, Heart, Sparkles, Users } from "lucide-react"
+import { ArrowRight, PenTool, Heart, Sparkles, Users, BookOpen } from "lucide-react"
 
 export function About() {
   return (
@@ -18,10 +18,10 @@ export function About() {
             <span>Our Mission</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
-            Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500">Developers</span> Worldwide.
+            Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500">Voices</span> Worldwide.
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            DevBlog is a next-generation platform designed for passionate developers, engineers, and tech enthusiasts. We believe in sharing knowledge, building communities, and pushing the boundaries of what's possible on the web.
+            BlogSpace is a next-generation platform designed for passionate writers, thinkers, and storytellers. We believe in sharing knowledge, building communities, and pushing the boundaries of what's possible on the web.
           </p>
         </section>
 
@@ -32,11 +32,11 @@ export function About() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                <Code className="w-7 h-7" />
+                <PenTool className="w-7 h-7" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-foreground">Cutting-Edge Tech</h3>
+              <h3 className="text-2xl font-bold mb-4 text-foreground">Inspiring Content</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Stay ahead of the curve with articles covering the latest frameworks, architectural patterns, and performance optimization techniques.
+                Stay engaged with articles covering a wide array of topics, unique perspectives, and compelling personal stories.
               </p>
             </div>
           </div>
@@ -50,7 +50,7 @@ export function About() {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">Vibrant Community</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Connect with like-minded individuals. Share your insights, get feedback on your code, and grow alongside industry experts.
+                Connect with like-minded individuals. Share your insights, receive thoughtful feedback, and grow alongside fellow creators.
               </p>
             </div>
           </div>
@@ -60,11 +60,11 @@ export function About() {
             <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-pink-500/10 text-pink-500 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                <Heart className="w-7 h-7" />
+                <BookOpen className="w-7 h-7" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-foreground">Open Source Heart</h3>
+              <h3 className="text-2xl font-bold mb-4 text-foreground">Open Platform</h3>
               <p className="text-muted-foreground leading-relaxed">
-                We believe in the power of open source. Our platform encourages collaboration and provides tools for developers to showcase their projects.
+                We believe in the power of shared ideas. Our platform encourages collaboration and provides tools for writers to showcase their work.
               </p>
             </div>
           </div>
@@ -76,7 +76,7 @@ export function About() {
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Ready to share your journey?</h2>
             <p className="text-lg text-white/70 mb-10">
-              Join thousands of developers who are already reading, writing, and growing on DevBlog. Your next big idea starts here.
+              Join thousands of creators who are already reading, writing, and growing on BlogSpace. Your next big idea starts here.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all">

@@ -18,9 +18,15 @@ export const createCategoryService = async (data: { name: string; slug: string; 
     return await Category.create(categoryData);};
 
 export const updateCategoryService = async (id: string, data: { name?: string; slug?: string; parent?: string | null }) => {
+    const updateData: any = { ...data };
+    if (data.parent === null) {
+        updateData.$unset = { parent: 1 };
+        delete updateData.parent;
+    }
+
     const category = await Category.findByIdAndUpdate(
         id,
-        { ...data, parent: data.parent === null ? undefined : data.parent },
+        updateData,
         { new: true, runValidators: true }
     );
 

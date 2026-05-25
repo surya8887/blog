@@ -30,7 +30,7 @@ export function Categories() {
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold tracking-tight mb-4">Explore Topics</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Find what matters to you. We cover everything from frontend frameworks to backend architecture.
+            Find what matters to you. Explore a wide variety of topics, from personal stories to professional insights.
           </p>
         </div>
 

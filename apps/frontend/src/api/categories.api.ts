@@ -4,6 +4,7 @@ import type { ApiResponse, Category } from "@/types"
 interface CategoryPayload {
   name: string
   slug: string
+  parent?: string | null
 }
 
 export const categoriesApi = {

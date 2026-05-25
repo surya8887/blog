@@ -26,6 +26,7 @@ export function AdminCategories() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [catName, setCatName] = useState("")
   const [catSlug, setCatSlug] = useState("")
+  const [catParent, setCatParent] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
@@ -48,6 +49,7 @@ export function AdminCategories() {
     setEditingCategory(null)
     setCatName("")
     setCatSlug("")
+    setCatParent("")
     setDialogOpen(true)
   }
 
@@ -55,6 +57,7 @@ export function AdminCategories() {
     setEditingCategory(cat)
     setCatName(cat.name)
     setCatSlug(cat.slug)
+    setCatParent(cat.parent || "")
     setDialogOpen(true)
   }
 
@@ -70,7 +73,9 @@ export function AdminCategories() {
     }
     setIsSaving(true)
     try {
-      const payload = { name: catName.trim(), slug: catSlug.trim() }
+      const payload: any = { name: catName.trim(), slug: catSlug.trim() }
+      payload.parent = catParent || null
+
       if (editingCategory) {
         await categoriesApi.update(editingCategory._id, payload)
         toast.success("Category updated.")
@@ -175,6 +180,21 @@ export function AdminCategories() {
             <div className="space-y-2">
               <Label>Slug</Label>
               <Input value={catSlug} onChange={(e) => setCatSlug(e.target.value)} placeholder="e.g. technology" />
+            </div>
+            <div className="space-y-2">
+              <Label>Parent Category (Optional)</Label>
+              <select
+                value={catParent}
+                onChange={(e) => setCatParent(e.target.value)}
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">None (Top-Level)</option>
+                {categories.map((c) => (
+                  c._id !== editingCategory?._id && (
+                    <option key={c._id} value={c._id}>{c.name}</option>
+                  )
+                ))}
+              </select>
             </div>
           </div>
           <DialogFooter>

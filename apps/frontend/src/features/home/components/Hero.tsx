@@ -9,16 +9,7 @@ export function Hero() {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
       <div className="container px-4 md:px-6 mx-auto">
         <div className="flex flex-col items-center text-center space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="inline-flex items-center rounded-full border bg-muted/50 px-3 py-1 text-sm font-medium backdrop-blur-sm">
-              <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
-              Introducing DevBlog v2.0
-            </span>
-          </motion.div>
+
           
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -28,7 +19,7 @@ export function Hero() {
           >
             The premium destination for{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-              modern developers
+              modern creators
             </span>
           </motion.h1>
           
@@ -38,7 +29,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-muted-foreground max-w-2xl leading-relaxed"
           >
-            Discover technical insights, share your stories, and connect with a community of innovative builders shaping the future of the web.
+            Discover inspiring ideas, share your stories, and connect with a community shaping the future.
           </motion.p>
           
           <motion.div

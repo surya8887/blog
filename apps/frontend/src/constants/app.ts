@@ -1,5 +1,5 @@
-export const APP_NAME = "DevBlog"
-export const APP_TAGLINE = "The premium destination for modern developers"
+export const APP_NAME = "BlogSpace"
+export const APP_TAGLINE = "The premium destination for creative minds and passionate writers"
 
 export const FALLBACK_COVER_IMAGE =
   "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000"

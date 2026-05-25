@@ -88,7 +88,7 @@ export function Signup() {
         <div className="relative z-20 mt-auto max-w-md">
           <blockquote className="space-y-4">
             <p className="text-xl leading-relaxed font-medium">
-              &ldquo;Join our community of thousands of developers sharing knowledge and building the future together.&rdquo;
+              &ldquo;Join our community of thousands of creators sharing stories and building the future together.&rdquo;
             </p>
             <div className="flex items-center space-x-4">
               <div className="flex -space-x-2">
@@ -98,7 +98,7 @@ export function Signup() {
                   </div>
                 ))}
               </div>
-              <div className="text-sm text-zinc-300">Join 10,000+ developers</div>
+              <div className="text-sm text-zinc-300">Join 10,000+ creators</div>
             </div>
           </blockquote>
         </div>
