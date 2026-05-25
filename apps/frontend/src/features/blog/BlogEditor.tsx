@@ -72,7 +72,6 @@ export function BlogEditor({
   const { theme } = useTheme()
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
   const { user } = useAuthStore()
-  const canAddCategory = user?.role === "ADMIN" || user?.role === "SUPERADMIN"
   
   const merged = { ...defaultInitial, ...initialValues }
 
@@ -245,29 +244,7 @@ export function BlogEditor({
               selected={selectedCategory}
               onSelect={setSelectedCategory}
             />
-            {canAddCategory && (
-              <div className="flex items-center gap-3 mt-4">
-                <input
-                  type="text"
-                  placeholder="Or type a new category..."
-                  className="px-4 py-2 rounded-full text-sm font-medium border bg-transparent border-border/50 text-foreground outline-none focus:border-primary/50 transition-colors w-full sm:w-72"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      const val = (e.target as HTMLInputElement).value.trim();
-                      if (val) {
-                        if (!categories.includes(val)) {
-                          setCategories(prev => [...prev, val]);
-                        }
-                        setSelectedCategory(val);
-                        (e.target as HTMLInputElement).value = "";
-                      }
-                    }
-                  }}
-                />
-                <span className="text-xs text-muted-foreground hidden sm:inline-block">Press Enter to add</span>
-              </div>
-            )}
+
           </div>
 
           <textarea
