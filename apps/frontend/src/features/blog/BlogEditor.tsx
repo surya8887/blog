@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import JoditEditor from "jodit-react"
 import { useTheme } from "next-themes"
-import { useAuthStore } from "@/store/useAuthStore"
-
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/shared/Spinner"
 import { CategoryPills } from "@/components/blog/CategoryPills"
@@ -71,7 +69,6 @@ export function BlogEditor({
   const navigate = useNavigate()
   const { theme } = useTheme()
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
-  const { user } = useAuthStore()
   
   const merged = { ...defaultInitial, ...initialValues }
 
