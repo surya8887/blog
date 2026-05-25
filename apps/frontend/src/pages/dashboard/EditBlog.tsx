@@ -44,7 +44,6 @@ export function EditBlog() {
   return (
     <BlogEditor
       initialValues={initial}
-      shell="plain"
       onSave={async (payload) => {
         await postsApi.update(id, payload)
         toast.success("Post updated!")
