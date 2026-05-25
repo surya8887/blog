@@ -80,3 +80,22 @@ export const uploadImageService = async (userId: string, imageType: "profilePict
     const { password: _, refreshToken: __, ...userWithoutSensitiveInfo } = updatedUser!;
     return userWithoutSensitiveInfo;
 };
+
+export const deleteAccountService = async (userId: string) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    if (!user) {
+        throw new ApiError("User not found", 404);
+    }
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: {
+            isActive: false,
+            deletedAt: new Date(),
+            refreshToken: null
+        }
+    });
+};

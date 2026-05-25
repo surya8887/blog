@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { asyncHandler, ApiResponse } from "@blog/common";
-import {getProfileService,updateProfileService} from "../services/profile.service.js";
+import {getProfileService,updateProfileService,deleteAccountService} from "../services/profile.service.js";
 
 export const getMe = asyncHandler(async (req: Request, res: Response) => {
     const profile = await getProfileService(req.user.id);
@@ -10,6 +10,11 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
 export const updateMe = asyncHandler(async (req: Request, res: Response) => {
     const profile = await updateProfileService(req.user.id, req.body);
     res.status(200).json(new ApiResponse(200, profile, "Profile updated successfully"));
+});
+
+export const deleteMe = asyncHandler(async (req: Request, res: Response) => {
+    await deleteAccountService(req.user.id);
+    res.status(200).json(new ApiResponse(200, null, "Account deleted successfully"));
 });
 
 import { uploadImageService } from "../services/profile.service.js";

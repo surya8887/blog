@@ -181,3 +181,30 @@ export const googleLoginService = async (idToken: string) => {
         throw new ApiError("Invalid or expired Google ID token", 401);
     }
 };
+
+export const changePasswordService = async (userId: string, data: any) => {
+    const { currentPassword, newPassword } = data;
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    if (!user) {
+        throw new ApiError("User not found", 404);
+    }
+
+    if (!user.password) {
+        throw new ApiError("This account uses Google Login. You cannot change the password.", 400);
+    }
+
+    if (!checkPassword(currentPassword, user.password)) {
+        throw new ApiError("Incorrect current password", 401);
+    }
+
+    const hashedPassword = hashPassword(newPassword);
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword }
+    });
+};

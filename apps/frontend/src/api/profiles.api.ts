@@ -29,4 +29,8 @@ export const profilesApi = {
     })
     return res.data.data
   },
+
+  async deleteAccount(): Promise<void> {
+    await api.delete("/profiles/me")
+  },
 }
