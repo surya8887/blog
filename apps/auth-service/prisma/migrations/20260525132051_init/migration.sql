@@ -5,7 +5,7 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'SUPERADMIN');
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "password" TEXT,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "is_verified" BOOLEAN NOT NULL DEFAULT false,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
