@@ -67,32 +67,15 @@ services:
       redis:
         condition: service_healthy
 
-  api-gateway:
+  web:
     build:
       context: .
-      target: api-gateway
+      target: web
     ports:
-      - "8000:8000"
-    environment:
-      - NODE_ENV=production
-      - PORT=8000
-      - AUTH_SERVICE_URL=http://auth-service:5000
-      - BLOG_SERVICE_URL=http://blog-service:5001
-      - FRONTEND_URL=http://localhost:5173
+      - "80:80"
     depends_on:
       - auth-service
       - blog-service
-
-  frontend:
-    build:
-      context: .
-      target: frontend
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=http://localhost:8000
-    depends_on:
-      - api-gateway
 
 volumes:
   pgdata:
