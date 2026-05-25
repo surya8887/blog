@@ -27,7 +27,7 @@ export const updateCategoryService = async (id: string, data: { name?: string; s
     const category = await Category.findByIdAndUpdate(
         id,
         updateData,
-        { new: true, runValidators: true }
+        { returnDocument: 'after', runValidators: true }
     );
 
     if (!category) {

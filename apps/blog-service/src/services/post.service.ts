@@ -72,7 +72,7 @@ export const updatePostService = async (id: string, data: any, userId: string) =
         updatedData.publishedAt = new Date();
     }
 
-    return await Post.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+    return await Post.findByIdAndUpdate(id, updatedData, { returnDocument: 'after', runValidators: true });
 };
 
 export const deletePostService = async (id: string, userId: string, role: string) => {
@@ -92,7 +92,7 @@ export const getSinglePostService = async (id: string) => {
     const post = await Post.findByIdAndUpdate(
         id,
         { $inc: { viewCount: 1 } },
-        { new: true }
+        { returnDocument: 'after' }
     ).populate("category");
 
     if (!post) {
