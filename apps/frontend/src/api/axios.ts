@@ -25,13 +25,17 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // If error is 401, request hasn't been retried, and it's not a refresh/login request
+    const isAuthEndpoint = originalRequest?.url?.startsWith("/auth/login") || 
+                           originalRequest?.url?.startsWith("/auth/signup") || 
+                           originalRequest?.url?.startsWith("/auth/google") || 
+                           originalRequest?.url?.startsWith("/auth/refresh");
+
+    // If error is 401, request hasn't been retried, and it's not an auth request
     if (
       error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-      originalRequest.url !== "/auth/refresh" &&
-      originalRequest.url !== "/auth/login"
+      !isAuthEndpoint
     ) {
       if (isRefreshing) {
         // If already refreshing, queue the request

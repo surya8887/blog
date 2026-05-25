@@ -9,6 +9,7 @@ COPY apps/blog-service/package.json ./apps/blog-service/
 COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/common/package.json ./packages/common/
 COPY packages/redis-client/package.json ./packages/redis-client/
+COPY packages/message-broker/package.json ./packages/message-broker/
 
 RUN npm install
 
@@ -17,6 +18,19 @@ COPY . .
 
 # Build all packages and services
 RUN npm run build --workspaces --if-present
+# --- Auth Service Stage ---
+FROM node:20-alpine AS auth-service
+WORKDIR /app
+COPY --from=base /app ./
+EXPOSE 5000
+CMD ["npm", "start", "--workspace=apps/auth-service"]
+
+# --- Blog Service Stage ---
+FROM node:20-alpine AS blog-service
+WORKDIR /app
+COPY --from=base /app ./
+EXPOSE 5001
+CMD ["npm", "start", "--workspace=apps/blog-service"]
 
 # --- Web Stage (Nginx) ---
 FROM nginx:alpine AS web

@@ -1,8 +1,8 @@
 import amqp from 'amqplib';
 
 class MessageBroker {
-  private connection?: amqp.Connection;
-  private channel?: amqp.Channel;
+  private connection?: any;
+  private channel?: any;
 
   async connect(url: string) {
     try {

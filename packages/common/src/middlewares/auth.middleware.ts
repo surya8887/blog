@@ -5,7 +5,7 @@ import { asyncHandler } from "../asyncHandler/index.js";
 
 // Extend express Request interface to include user
 declare global {
-  namespace Exp8ress {
+  namespace Express {
     interface Request {
       user?: any;
     }
