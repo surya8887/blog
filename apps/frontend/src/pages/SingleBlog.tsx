@@ -146,17 +146,10 @@ export function SingleBlog() {
         </div>
 
         {/* Article body */}
-        <div className="prose prose-lg dark:prose-invert max-w-none font-serif prose-headings:font-sans prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-2xl leading-loose">
-          {post.content.split("\n").map((paragraph, idx) =>
-            paragraph.trim() ? (
-              <p key={idx} className="mb-6">
-                {paragraph}
-              </p>
-            ) : (
-              <br key={idx} />
-            )
-          )}
-        </div>
+        <div 
+          className="prose prose-lg dark:prose-invert max-w-none font-serif prose-headings:font-sans prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-2xl leading-loose"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-12 mb-4">

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import JoditEditor from "jodit-react"
 
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/shared/Spinner"
@@ -80,8 +81,19 @@ export function BlogEditor({
   const [categories, setCategories] = useState<string[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
 
-  const contentRef = useAutoResizeTextarea<HTMLTextAreaElement>(content)
   const excerptRef = useAutoResizeTextarea<HTMLTextAreaElement>(excerpt)
+  const editorRef = useRef(null)
+
+  const joditConfig = useMemo(() => ({
+    readonly: false,
+    placeholder: "Tell your story…",
+    theme: "dark",
+    minHeight: 400,
+    style: {
+      background: "transparent",
+      color: "inherit"
+    }
+  }), [])
 
   useEffect(() => {
     setTitle(merged.title)
@@ -251,14 +263,15 @@ export function BlogEditor({
             <TagsInput tags={tags} onChange={setTags} />
           </div>
 
-          <textarea
-            ref={contentRef}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Tell your story…"
-            className="w-full bg-transparent text-lg md:text-xl text-foreground placeholder:text-muted-foreground/50 outline-none resize-none leading-relaxed font-serif"
-            style={{ minHeight: "300px" }}
-          />
+          <div className="w-full text-foreground mt-4 overflow-hidden rounded-md border border-border/30">
+            <JoditEditor
+              ref={editorRef}
+              value={content}
+              config={joditConfig}
+              onBlur={(newContent) => setContent(newContent)}
+              onChange={(newContent) => setContent(newContent)}
+            />
+          </div>
         </Shell>
       </div>
     </div>

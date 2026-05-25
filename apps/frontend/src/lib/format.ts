@@ -17,7 +17,8 @@ export function formatLongDate(date: DateInput): string {
 }
 
 export function getReadTime(content: string | undefined | null): number {
-  const words = (content ?? "").trim().split(/\s+/).filter(Boolean).length
+  const plainText = (content ?? "").replace(/<[^>]+>/g, "")
+  const words = plainText.trim().split(/\s+/).filter(Boolean).length
   if (words === 0) return 1
   return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE))
 }
