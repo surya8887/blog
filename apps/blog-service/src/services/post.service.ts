@@ -81,7 +81,7 @@ export const deletePostService = async (id: string, userId: string, role: string
         throw new ApiError("Post not found", 404);
     }
 
-    if (post.author.userId.toString() !== userId && role !== "admin") {
+    if (post.author.userId.toString() !== userId && !['admin', 'superadmin'].includes(role.toLowerCase())) {
         throw new ApiError("You do not have permission to delete this post", 403);
     }
 

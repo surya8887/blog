@@ -63,7 +63,7 @@ export const deleteCommentService = async (id: string, userId: string, role: str
         throw new ApiError("Comment not found", 404);
     }
 
-    if (comment.author.userId.toString() !== userId && role !== "admin") {
+    if (comment.author.userId.toString() !== userId && !['admin', 'superadmin'].includes(role.toLowerCase())) {
         throw new ApiError("You do not have permission to delete this comment", 403);
     }
 
