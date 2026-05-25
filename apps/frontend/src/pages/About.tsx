@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, PenTool, Heart, Sparkles, Users, BookOpen } from "lucide-react"
+import { ArrowRight, PenTool, Sparkles, Users, BookOpen } from "lucide-react"
 
 export function About() {
   return (

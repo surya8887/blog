@@ -22,6 +22,7 @@ import { AdminPosts } from "@/pages/admin/AdminPosts"
 import { AdminPostComments } from "@/pages/admin/AdminPostComments"
 import { AdminComments } from "@/pages/admin/AdminComments"
 import { AdminCategories } from "@/pages/admin/AdminCategories"
+import { AdminUsers } from "@/pages/admin/AdminUsers"
 
 export const AppRouter = () => {
   return (
@@ -36,6 +37,7 @@ export const AppRouter = () => {
         <Route path="posts/:id/comments" element={<AdminPostComments />} />
         <Route path="comments" element={<AdminComments />} />
         <Route path="categories" element={<AdminCategories />} />
+        <Route path="users" element={<AdminUsers />} />
       </Route>
 
       <Route 

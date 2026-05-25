@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom"
 import {
-  ChevronRight, FileText, FolderTree, Home, LayoutDashboard, MessageSquare, Shield,
+  ChevronRight, FileText, FolderTree, Home, LayoutDashboard, MessageSquare, Shield, Users,
   type LucideIcon,
 } from "lucide-react"
 
@@ -20,6 +20,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard, exact: true },
+  { name: "Users", path: "/admin/users", icon: Users },
   { name: "Posts", path: "/admin/posts", icon: FileText },
   { name: "Comments", path: "/admin/comments", icon: MessageSquare },
   { name: "Categories", path: "/admin/categories", icon: FolderTree },
@@ -44,7 +45,7 @@ export const AdminLayout = () => {
           </div>
 
           <nav className="flex-1 px-3 py-4 space-y-1">
-            {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.filter(item => item.name !== "Users" || user?.role === "SUPERADMIN").map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -91,7 +92,7 @@ export const AdminLayout = () => {
         </aside>
 
         <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-border/40 bg-background/95 backdrop-blur-sm flex">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter(item => item.name !== "Users" || user?.role === "SUPERADMIN").map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
