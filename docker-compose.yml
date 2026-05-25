@@ -29,12 +29,24 @@ services:
       timeout: 3s
       retries: 5
 
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   auth-service:
     build:
       context: .
       target: auth-service
     # ports:
     #   - "5000:5000"
+    env_file:
+      - apps/auth-service/.env
     environment:
       - NODE_ENV=production
       - PORT=5000
@@ -56,13 +68,16 @@ services:
       target: blog-service
     # ports:
     #   - "5001:5001"
+    env_file:
+      - apps/blog-service/.env
     environment:
       - NODE_ENV=production
       - PORT=5001
-      - DATABASE_URL=postgresql://root:password@postgres:5432/blog?schema=public
+      - MONGO_URI=mongodb://mongo:27017/blog
       - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=supersecretjwtkeyforauth
     depends_on:
-      postgres:
+      mongo:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -80,3 +95,4 @@ services:
 volumes:
   pgdata:
   redisdata:
+  mongodata:
