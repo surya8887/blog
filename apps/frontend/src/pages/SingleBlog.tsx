@@ -126,7 +126,7 @@ export function SingleBlog() {
     <article className="min-h-screen bg-background pb-32 animate-in fade-in duration-700">
       <PostHero post={post} likeCount={likeCount} readTime={readTime} />
 
-      <div className="container max-w-3xl mx-auto px-4 mt-16">
+      <div className="container mx-auto px-4 mt-16">
         {/* Floating Actions */}
         <div className="fixed left-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-4">
           <FloatingAction
