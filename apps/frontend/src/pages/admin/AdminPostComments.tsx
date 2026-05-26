@@ -79,7 +79,7 @@ export function AdminPostComments() {
   }
 
   return (
-    <div className="px-6 py-8 pb-24 md:pb-8 space-y-6 max-w-5xl">
+    <div className="px-6 py-8 pb-24 md:pb-8 space-y-6">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={() => navigate("/admin/posts")} className="shrink-0">
           <ArrowLeft className="w-4 h-4" />
@@ -93,7 +93,7 @@ export function AdminPostComments() {
       {post && (
         <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden">
           {post.coverImage && (
-            <div className="h-48 overflow-hidden">
+            <div className="h-64 md:h-80 overflow-hidden">
               <img src={post.coverImage} alt="" className="w-full h-full object-cover" />
             </div>
           )}
