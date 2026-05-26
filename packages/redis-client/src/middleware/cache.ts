@@ -22,7 +22,10 @@ export const cacheMiddleware = (ttl: number) => {
         console.log(`[Redis] Cache hit for ${key}`);
         res.setHeader("X-Cache", "HIT");
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        return res.status(200).json(JSON.parse(cachedData));
+        
+        // @upstash/redis automatically parses JSON responses
+        const data = typeof cachedData === 'string' ? JSON.parse(cachedData) : cachedData;
+        return res.status(200).json(data);
       }
 
       console.log(`[Redis] Cache miss for ${key}`);
@@ -33,7 +36,7 @@ export const cacheMiddleware = (ttl: number) => {
       const originalJson = res.json.bind(res);
       res.json = (body: any) => {
         // Cache the response body
-        redis.set(key, JSON.stringify(body), "EX", ttl).catch((err) => {
+        redis.set(key, body, { ex: ttl }).catch((err) => {
           console.error("[Redis] Failed to set cache:", err);
         });
 
