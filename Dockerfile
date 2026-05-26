@@ -34,9 +34,15 @@ CMD ["npm", "start", "--workspace=apps/blog-service"]
 
 # --- Web Stage (Nginx) ---
 FROM nginx:alpine AS web
-# Copy custom Nginx configuration
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Enable local resolvers extraction and set template output directory
+ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+
+# Copy custom Nginx configuration as a template
+COPY nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
 # Copy built React files to Nginx HTML folder
 COPY --from=base /app/apps/frontend/dist /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
