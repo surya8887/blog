@@ -23,7 +23,7 @@ export const createUploadMiddleware = (options: UploadOptions = {}): Multer => {
       fileSize: maxSize,
     },
     fileFilter: (req, file, cb) => {
-      if (allowedMimeTypes.includes(file.mimetype)) {
+      if (allowedMimeTypes.includes(file.mimetype) || (allowedMimeTypes.includes("image/*") && file.mimetype.startsWith("image/"))) {
         cb(null, true);
       } else {
         cb(new Error(`Invalid file type. Allowed types: ${allowedMimeTypes.join(", ")}`));
