@@ -1,45 +1,9 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: blog
-    # ports:
-    #   - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d blog"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    # ports:
-    #   - "6379:6379"
-    volumes:
-      - redisdata:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  mongo:
-    image: mongo:6
-    volumes:
-      - mongodata:/data/db
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   auth-service:
+    image: vijayabout2001/blog_repo:auth-service-v1
     build:
       context: .
       target: auth-service
@@ -50,19 +14,16 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - DATABASE_URL=postgresql://root:password@postgres:5432/blog?schema=public
-      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres.ppbjlfrjhjodibijghkl:fA%3Fa2tF8NqLu9PS@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?pgbouncer=true
+      - UPSTASH_REDIS_REST_URL=https://talented-dodo-136646.upstash.io
+      - UPSTASH_REDIS_REST_TOKEN=gQAAAAAAAhXGAAIgcDEzZDkwN2U1ZTJlZTY0Nzk5OTcwM2VmNWYwMTM2NTQwMw
       - JWT_SECRET=supersecretjwtkeyforauth
       - JWT_EXPIRES_IN=1d
       - JWT_REFRESH_SECRET=supersecretrefreshkey
       - JWT_REFRESH_EXPIRES_IN=7d
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
 
   blog-service:
+    image: vijayabout2001/blog_repo:blog-service-v1
     build:
       context: .
       target: blog-service
@@ -73,16 +34,13 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5001
-      - MONGO_URI=mongodb://mongo:27017/blog
-      - REDIS_URL=redis://redis:6379
+      - MONGO_URI=mongodb+srv://Surya:271124@backend.m0gxk.mongodb.net/?appName=Backend
+      - UPSTASH_REDIS_REST_URL=https://talented-dodo-136646.upstash.io
+      - UPSTASH_REDIS_REST_TOKEN=gQAAAAAAAhXGAAIgcDEzZDkwN2U1ZTJlZTY0Nzk5OTcwM2VmNWYwMTM2NTQwMw
       - JWT_SECRET=supersecretjwtkeyforauth
-    depends_on:
-      mongo:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
 
   web:
+    image: vijayabout2001/blog_repo:web-v1
     build:
       context: .
       target: web
@@ -92,7 +50,3 @@ services:
       - auth-service
       - blog-service
 
-volumes:
-  pgdata:
-  redisdata:
-  mongodata:
