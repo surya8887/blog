@@ -9,7 +9,7 @@ export function About() {
       <div className="absolute -top-[300px] -right-[300px] w-[600px] h-[600px] rounded-full bg-purple-500/10 blur-[100px] pointer-events-none"></div>
       <div className="absolute top-[200px] -left-[200px] w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[100px] pointer-events-none"></div>
 
-      <div className="container max-w-6xl mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-4 py-20 relative z-10">
         
         {/* Hero Section */}
         <section className="text-center max-w-3xl mx-auto mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700">

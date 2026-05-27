@@ -159,7 +159,7 @@ export function Blogs() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header & Search */}
       <div className="bg-muted/30 border-b border-border/50 py-16">
-        <div className="container max-w-6xl mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
             Read our{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
@@ -172,7 +172,7 @@ export function Blogs() {
         </div>
       </div>
 
-      <div className="container max-w-6xl mx-auto px-4 mt-12">
+      <div className="container mx-auto px-4 mt-12">
         <CategoryPills
           categories={categoryNames}
           selected={activeCategory}

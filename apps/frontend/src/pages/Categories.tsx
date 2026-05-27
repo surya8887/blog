@@ -32,7 +32,7 @@ export function Categories() {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="container max-w-6xl mx-auto px-4 text-center relative z-10">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
             Explore{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
@@ -45,7 +45,7 @@ export function Categories() {
         </div>
       </div>
 
-      <div className="container max-w-6xl mx-auto px-4 mt-16">
+      <div className="container mx-auto px-4 mt-16">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />

@@ -87,7 +87,7 @@ export function CoverImageUploader({
               <ImagePlus className="w-6 h-6" />
             </div>
             <p className="mb-2 text-sm font-semibold">Click to upload cover image</p>
-            <p className="text-xs opacity-70">PNG, JPG, WEBP up to 5MB</p>
+            <p className="text-xs opacity-70">Any image up to 10MB</p>
           </div>
         )}
         <Input

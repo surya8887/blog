@@ -5,8 +5,8 @@ export function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 md:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
-          <div className="md:col-span-1 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+          <div className="lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <Hexagon className="h-6 w-6 text-primary" />
               <span className="inline-block font-bold text-xl">BlogSpace</span>
@@ -30,33 +30,35 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h3 className="font-medium mb-4">Resources</h3>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link to="/blogs" className="hover:text-foreground transition-colors">All Posts</Link></li>
-              <li><Link to="/categories" className="hover:text-foreground transition-colors">Categories</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Tutorials</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Newsletter</Link></li>
-            </ul>
-          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:col-span-3">
+            <div>
+              <h3 className="font-medium mb-4">Resources</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/blogs" className="hover:text-foreground transition-colors">All Posts</Link></li>
+                <li><Link to="/categories" className="hover:text-foreground transition-colors">Categories</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Tutorials</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Newsletter</Link></li>
+              </ul>
+            </div>
 
-          <div>
-            <h3 className="font-medium mb-4">Company</h3>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link to="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Careers</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Contact</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Press</Link></li>
-            </ul>
-          </div>
+            <div>
+              <h3 className="font-medium mb-4">Company</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Careers</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Contact</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Press</Link></li>
+              </ul>
+            </div>
 
-          <div>
-            <h3 className="font-medium mb-4">Legal</h3>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link to="#" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
-              <li><Link to="#" className="hover:text-foreground transition-colors">Cookie Policy</Link></li>
-            </ul>
+            <div className="col-span-2 md:col-span-1">
+              <h3 className="font-medium mb-4">Legal</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="#" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
+                <li><Link to="#" className="hover:text-foreground transition-colors">Cookie Policy</Link></li>
+              </ul>
+            </div>
           </div>
         </div>
         

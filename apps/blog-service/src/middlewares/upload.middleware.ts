@@ -2,8 +2,8 @@ import { createUploadMiddleware } from "@blog/common";
 
 // Multer middleware for blog cover images (5MB max, standard image formats)
 const uploadMiddleware = createUploadMiddleware({
-    maxSizeMB: 5,
-    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+    maxSizeMB: 10,
+    allowedMimeTypes: ["image/*"],
 });
 
 // Export as a single-file upload handler expecting field name "image"
