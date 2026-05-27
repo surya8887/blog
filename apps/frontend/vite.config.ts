@@ -47,5 +47,45 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'three-vendor',
+              test: /[\\/]node_modules[\\/](three|@react-three|maath)[\\/]/,
+            },
+            {
+              name: 'firebase-vendor',
+              test: /[\\/]node_modules[\\/]firebase[\\/]/,
+            },
+            {
+              name: 'jodit-vendor',
+              test: /[\\/]node_modules[\\/]jodit(-react)?[\\/]/,
+            },
+            {
+              name: 'recharts-vendor',
+              test: /[\\/]node_modules[\\/]recharts[\\/]/,
+            },
+            {
+              name: 'framer-motion-vendor',
+              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+            },
+            {
+              name: 'react-query-vendor',
+              test: /[\\/]node_modules[\\/]@tanstack[\\/]react-query[\\/]/,
+            },
+            {
+              name: 'vendor',
+              test: /[\\/]node_modules[\\/]/,
+            },
+          ],
+        },
+      },
+    },
   }
 })
+
