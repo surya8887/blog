@@ -4,5 +4,12 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "allowScripts": {
+    "@firebase/util@1.15.1": true,
+    "msw@2.14.6": true,
+    "protobufjs@7.6.1": true,
+    "@prisma/engines@7.8.0": true,
+    "prisma@7.8.0": true
+  }
 }

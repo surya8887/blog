@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
+import dns from "dns";
 import { env } from "../config/env.js";
+
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 const connectDB = async () => {
     try {
         if(!env.MONGO_URI){
