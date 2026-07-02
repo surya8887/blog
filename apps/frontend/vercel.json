@@ -2,31 +2,31 @@
   "rewrites": [
     {
       "source": "/api/v1/upload/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/upload/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/upload/:match*"
     },
     {
       "source": "/api/v1/posts/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/posts/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/posts/:match*"
     },
     {
       "source": "/api/v1/categories/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/categories/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/categories/:match*"
     },
     {
       "source": "/api/v1/comments/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/comments/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/comments/:match*"
     },
     {
       "source": "/api/v1/likes/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/likes/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/likes/:match*"
     },
     {
       "source": "/api/v1/admin/:match*",
-      "destination": "https://YOUR_BLOG_SERVICE_URL/api/v1/admin/:match*"
+      "destination": "https://blog-repo-blog-service-v1.onrender.com/api/v1/admin/:match*"
     },
     {
       "source": "/api/:match*",
-      "destination": "https://YOUR_AUTH_SERVICE_URL/api/:match*"
+      "destination": "https://blog-repo-auth-service-v1.onrender.com/api/:match*"
     },
     {
       "source": "/(.*)",

@@ -10,8 +10,8 @@ const startServer = async (): Promise<void> => {
 
     await connectDB();
 
-    const server = app.listen(Number(env.PORT), "0.0.0.0", () => {
-      console.log(`🚀 Server running at http://0.0.0.0:${env.PORT}`);
+    const server = app.listen(Number(env.PORT), () => {
+      console.log(`🚀 Server running at http://localhost:${env.PORT}`);
     });
 
     // Graceful shutdown function
