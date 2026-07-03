@@ -38,7 +38,7 @@ FROM nginx:alpine AS web
 # Enable local resolvers extraction and set template output directory
 ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
-ENV NGINX_ENVSUBST_FILTER="AUTH_SERVICE_URL BLOG_SERVICE_URL"
+ENV NGINX_ENVSUBST_FILTER="AUTH_SERVICE_URL|BLOG_SERVICE_URL|NGINX_LOCAL_RESOLVERS"
 
 # Default values for local Docker Compose environment
 ENV AUTH_SERVICE_URL=http://auth-service:5000
