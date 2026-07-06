@@ -40,9 +40,9 @@ ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
 ENV NGINX_ENVSUBST_FILTER="AUTH_SERVICE_URL|BLOG_SERVICE_URL|NGINX_LOCAL_RESOLVERS"
 
-# Default values for Render production deployment
-ENV AUTH_SERVICE_URL=https://blog-repo-auth-service-v1.onrender.com
-ENV BLOG_SERVICE_URL=https://blog-repo-blog-service-v1.onrender.com
+# Default values for local development
+ENV AUTH_SERVICE_URL=http://auth-service:5000
+ENV BLOG_SERVICE_URL=http://blog-service:5001
 
 # Copy custom Nginx configuration as a template
 COPY nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
