@@ -4,7 +4,7 @@
   "description": "",
   "main": "service.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "npx prisma migrate deploy && node dist/server.js",
     "dev": "nodemon dist/server.js",
     "build": "tsc",
     "watch": "tsc -watch"
