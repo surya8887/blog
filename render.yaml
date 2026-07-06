@@ -1,53 +1,68 @@
-databases:
-  - name: blog-db
-    plan: free
-    databaseName: blog_users
-    user: surya
-
 services:
   - type: web
-    name: blog-auth-service
-    env: docker
+    name: auth-service
+    env: image
     image:
-      imagePath: vijayabout2001/blog_repo:auth-service-v1
-    plan: free
-    healthCheckPath: /health
+      url: docker.io/vijayabout2001/blog_repo:auth-service-v1
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: PORT
-        value: 5000
+        value: "5000"
       - key: DATABASE_URL
         fromDatabase:
-          name: blog-db
+          name: blog_users_db
           property: connectionString
-      - key: NODE_ENV
-        value: production
-      # Note: Add JWT, UPSTASH, and FIREBASE environment variables manually in the Render Dashboard after creation for security.
+      - key: UPSTASH_REDIS_REST_URL
+        value: https://talented-dodo-136646.upstash.io
+      - key: UPSTASH_REDIS_REST_TOKEN
+        value: gQAAAAAAAhXGAAIgcDEzZDkwN2U1ZTJlZTY0Nzk5OTcwM2VmNWYwMTM2NTQwMw
+      - key: JWT_SECRET
+        value: supersecretjwtkeyforauth
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: JWT_REFRESH_SECRET
+        value: supersecretrefreshkey
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
 
   - type: web
-    name: blog-blog-service
-    env: docker
+    name: blog-service
+    env: image
     image:
-      imagePath: vijayabout2001/blog_repo:blog-service-v1
-    plan: free
-    healthCheckPath: /health
+      url: docker.io/vijayabout2001/blog_repo:blog-service-v1
     envVars:
-      - key: PORT
-        value: 5001
       - key: NODE_ENV
         value: production
-      # Note: Add MONGO_URI, JWT, and UPSTASH environment variables manually in the Render Dashboard after creation for security.
+      - key: PORT
+        value: "5001"
+      - key: MONGO_URI
+        value: mongodb+srv://Surya:271124@backend.m0gxk.mongodb.net/?appName=Backend
+      - key: UPSTASH_REDIS_REST_URL
+        value: https://talented-dodo-136646.upstash.io
+      - key: UPSTASH_REDIS_REST_TOKEN
+        value: gQAAAAAAAhXGAAIgcDEzZDkwN2U1ZTJlZTY0Nzk5OTcwM2VmNWYwMTM2NTQwMw
+      - key: JWT_SECRET
+        value: supersecretjwtkeyforauth
 
   - type: web
-    name: blog-frontend
-    env: docker
+    name: web
+    env: image
     image:
-      imagePath: vijayabout2001/blog_repo:web-v1
-    plan: free
-    healthCheckPath: /
+      url: docker.io/vijayabout2001/blog_repo:web-v1
     envVars:
-      - key: PORT
-        value: 80
       - key: AUTH_SERVICE_URL
-        value: https://blog-repo-auth-service-v1.onrender.com
+        fromService:
+          type: web
+          name: auth-service
+          property: url
       - key: BLOG_SERVICE_URL
-        value: https://blog-repo-blog-service-v1.onrender.com
+        fromService:
+          type: web
+          name: blog-service
+          property: url
+
+databases:
+  - name: blog_users_db
+    databaseName: blog_users
+    user: surya
