@@ -52,15 +52,9 @@ services:
       url: docker.io/vijayabout2001/blog_repo:web-v1
     envVars:
       - key: AUTH_SERVICE_URL
-        fromService:
-          type: web
-          name: auth-service
-          property: url
+        value: http://auth-service:5000
       - key: BLOG_SERVICE_URL
-        fromService:
-          type: web
-          name: blog-service
-          property: url
+        value: http://blog-service:5001
 
 databases:
   - name: blog_users_db
